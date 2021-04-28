@@ -5,13 +5,13 @@ import java.sql.Timestamp;
 public class ArtworkDTO {
     private int idartwork;
     private String name;
-    private int author_id;
+    private String authorName;
     byte[] picture;
     private Timestamp date;
     private boolean certified;
     private String storedLocation;
-    private int collectionId;
-    private int stateId;
+    private String collectionName;
+    private String state;
 
     public int getIdartwork() {
         return idartwork;
@@ -29,12 +29,12 @@ public class ArtworkDTO {
         this.name = name;
     }
 
-    public int getAuthor_id() {
-        return author_id;
+    public String getAuthor_id() {
+        return authorName;
     }
 
-    public void setAuthor_id(int author_id) {
-        this.author_id = author_id;
+    public void setAuthor_id(String authorName) {
+        this.authorName = authorName;
     }
 
     public byte[] getPicture() {
@@ -69,19 +69,19 @@ public class ArtworkDTO {
         this.storedLocation = storedLocation;
     }
 
-    public int getCollectionId() {
-        return collectionId;
+    public String getCollectionId() {
+        return collectionName;
     }
 
-    public void setCollectionId(int collectionId) {
-        this.collectionId = collectionId;
+    public void setCollectionId(String collectionName) {
+        this.collectionName = collectionName;
     }
 
-    public int getStateId() {
-        return stateId;
+    public String getStateId() {
+        return state;
     }
 
-    public void setStateId(int stateId) {
-        this.stateId = stateId;
+    public void setStateId(String stateId) {
+        this.state = state;
     }
 }
