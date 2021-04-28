@@ -14,9 +14,9 @@ public class DatasourceFactory {
     public DataSource getDataSource() {
         DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName("com.mysql.cj.jdbc.Driver");
-        dataSourceBuilder.url("jdbc:mysql://localhost");
+        dataSourceBuilder.url("jdbc:mysql://museo-sql.mysql.database.azure.com");
         dataSourceBuilder.username("dev");
-        dataSourceBuilder.password("password");
+        dataSourceBuilder.password("FVEgUUg4HNqR4bD8");
         return dataSourceBuilder.build();
     }
 }
