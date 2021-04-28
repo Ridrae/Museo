@@ -1,4 +1,4 @@
-package com.g4.museo.persistence;
+package com.g4.museo.persistence.factory;
 
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +14,7 @@ public class DatasourceFactory {
     public DataSource getDataSource() {
         DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName("com.mysql.cj.jdbc.Driver");
-        dataSourceBuilder.url("jdbc:mysql://museo-sql.mysql.database.azure.com");
+        dataSourceBuilder.url("jdbc:mysql://museo-sql.mysql.database.azure.com/museo");
         dataSourceBuilder.username("dev");
         dataSourceBuilder.password("FVEgUUg4HNqR4bD8");
         return dataSourceBuilder.build();
