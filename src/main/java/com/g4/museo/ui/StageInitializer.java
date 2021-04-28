@@ -2,6 +2,7 @@ package com.g4.museo.ui;
 
 import com.g4.museo.events.StageReadyEvent;
 import com.g4.museo.persistence.jdbc.ArtworkJdbcDao;
+import com.g4.museo.ui.fxml.LoginFxmlController;
 import com.g4.museo.ui.fxml.MainFxmlController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
