@@ -50,11 +50,4 @@ public class MainFxmlController {
         localisation.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getStoredLocation()));
         artworkGrid.getColumns().addAll(name, artist, date, returnDate, localisation);
     }
-
-    public void ButtonAdministation(){
-
-        Button button2 = new Button("Button with Text & Image");
-        button2.setGraphic(new ImageView());
-
-    }
 }
