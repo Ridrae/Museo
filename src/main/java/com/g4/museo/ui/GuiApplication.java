@@ -10,13 +10,28 @@ import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
+@Configuration
 public class  GuiApplication extends Application {
     private ConfigurableApplicationContext applicationContext;
+    private Stage stage;
+
+    @Bean
+    public Stage getStage(){
+        return this.stage;
+    }
+
+    @Bean
+    public ConfigurableApplicationContext getConfigurableApplicationContext(){
+        return this.applicationContext;
+    }
 
     @Override
     public void start(Stage stage) throws Exception {
-        applicationContext.publishEvent(new StageReadyEvent(stage));
+        this.stage = stage;
+        applicationContext.publishEvent(new StageReadyEvent(this.stage));
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.g4.museo.ui.fxml;
 
 import com.g4.museo.persistence.dto.ArtworkDTO;
 import com.g4.museo.persistence.jdbc.ArtworkJdbcDao;
+import com.g4.museo.ui.LoginInitializer;
 import javafx.beans.Observable;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
@@ -17,6 +18,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
@@ -30,8 +32,12 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.g4.museo.events.LoginCalledEvent;
+
 @Component
 public class MainFxmlController {
+    private ConfigurableApplicationContext applicationContext;
+
     @FXML
     private TableView artworkGrid;
 
@@ -60,12 +66,10 @@ public class MainFxmlController {
     }
 
     @FXML
-    private void handleButtonAction(ActionEvent event) throws IOException {
-        Parent login_page_parent = FXMLLoader.load(getClass().getClassLoader().getResource("login.fxml"));
-        Scene login_page_scene = new Scene (login_page_parent);
-        Stage app_stage = (Stage) ((Node)  event.getSource()).getScene().getWindow();
-        app_stage.setScene(login_page_scene);
-        app_stage.show();
+    private void onLoginCalled(ActionEvent event){
+        Scene scene = (Scene) ((Node) event.getSource()).getScene();
+        Stage stage = (Stage)scene.getWindow();
+        LoginInitializer.onLoginEvent(stage);
     }
 
 }

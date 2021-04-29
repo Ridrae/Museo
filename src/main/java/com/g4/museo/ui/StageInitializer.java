@@ -23,6 +23,7 @@ public class StageInitializer implements ApplicationListener<StageReadyEvent> {
     @Autowired
     ArtworkJdbcDao artworkJdbcDao;
 
+
     @Override
     public void onApplicationEvent(StageReadyEvent event) {
         Stage stage = event.getStage();
