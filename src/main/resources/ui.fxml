@@ -28,7 +28,7 @@
                         </Label>
                      </children>
                   </AnchorPane>
-                  <Button alignment="CENTER_RIGHT" mnemonicParsing="false" style="-fx-background-color: #2699FB;" text="Gestion" textFill="WHITE" />
+                  <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#ManagementButtonAction" style="-fx-background-color: #2699FB;" text="Gestion" textFill="WHITE" />
                   <Button alignment="CENTER_RIGHT" mnemonicParsing="false" style="-fx-background-color: #2699FB;" text="Admin" textFill="WHITE" />
                </children></HBox>
             <HBox prefHeight="63.0" prefWidth="1280.0">
