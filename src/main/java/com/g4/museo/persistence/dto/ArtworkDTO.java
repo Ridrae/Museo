@@ -5,13 +5,14 @@ import java.sql.Timestamp;
 public class ArtworkDTO {
     private int idartwork;
     private String name;
-    private int author_id;
+    private String authorName;
     byte[] picture;
     private Timestamp date;
     private boolean certified;
     private String storedLocation;
-    private int collectionId;
-    private int stateId;
+    private String collectionName;
+    private String state;
+    private boolean borrowed;
 
     public int getIdartwork() {
         return idartwork;
@@ -29,12 +30,12 @@ public class ArtworkDTO {
         this.name = name;
     }
 
-    public int getAuthor_id() {
-        return author_id;
+    public String getAuthorName() {
+        return authorName;
     }
 
-    public void setAuthor_id(int author_id) {
-        this.author_id = author_id;
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
     }
 
     public byte[] getPicture() {
@@ -69,19 +70,27 @@ public class ArtworkDTO {
         this.storedLocation = storedLocation;
     }
 
-    public int getCollectionId() {
-        return collectionId;
+    public String getCollectionName() {
+        return collectionName;
     }
 
-    public void setCollectionId(int collectionId) {
-        this.collectionId = collectionId;
+    public void setCollectionName(String collectionName) {
+        this.collectionName = collectionName;
     }
 
-    public int getStateId() {
-        return stateId;
+    public String getState() {
+        return state;
     }
 
-    public void setStateId(int stateId) {
-        this.stateId = stateId;
+    public void setState(String stateId) {
+        this.state = state;
+    }
+
+    public boolean isBorrowed() {
+        return borrowed;
+    }
+
+    public void setBorrowed(boolean borrowed) {
+        this.borrowed = borrowed;
     }
 }
