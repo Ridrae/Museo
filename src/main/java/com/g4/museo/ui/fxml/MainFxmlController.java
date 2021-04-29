@@ -6,14 +6,18 @@ import javafx.beans.Observable;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
+import java.io.InputStream;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicReference;
@@ -45,5 +49,12 @@ public class MainFxmlController {
         TableColumn<ArtworkDTO, String> localisation = new TableColumn<>("Localisation");
         localisation.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getStoredLocation()));
         artworkGrid.getColumns().addAll(name, artist, date, returnDate, localisation);
+    }
+
+    public void ButtonAdministation(){
+
+        Button button2 = new Button("Button with Text & Image");
+        button2.setGraphic(new ImageView());
+
     }
 }
