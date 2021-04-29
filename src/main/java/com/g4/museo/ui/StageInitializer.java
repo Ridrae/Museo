@@ -2,6 +2,7 @@ package com.g4.museo.ui;
 
 import com.g4.museo.events.StageReadyEvent;
 import com.g4.museo.persistence.jdbc.ArtworkJdbcDao;
+import com.g4.museo.ui.fxml.LoginFxmlController;
 import com.g4.museo.ui.fxml.MainFxmlController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -22,6 +23,7 @@ public class StageInitializer implements ApplicationListener<StageReadyEvent> {
     @Autowired
     ArtworkJdbcDao artworkJdbcDao;
 
+
     @Override
     public void onApplicationEvent(StageReadyEvent event) {
         Stage stage = event.getStage();
@@ -30,7 +32,7 @@ public class StageInitializer implements ApplicationListener<StageReadyEvent> {
             Parent root = loader.load();
             MainFxmlController mainFxmlController = (MainFxmlController) loader.getController();
             Scene mainScene= new Scene(root, 1280, 720);
-            mainFxmlController.populateArtworkGrid(artworkJdbcDao.getAllArtwork());
+            mainFxmlController.populateArtworkGrid(artworkJdbcDao.getAllArtwork(), artworkJdbcDao);
             stage.setScene(mainScene);
             stage.setTitle("Museo Application");
             //stage.setMaximized(true);

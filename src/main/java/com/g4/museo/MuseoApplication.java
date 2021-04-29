@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class MuseoApplication {
 
     public static void main(String[] args) {
+
         Application.launch(GuiApplication.class, args);
     }
 
