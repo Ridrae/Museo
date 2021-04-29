@@ -12,6 +12,7 @@ public class ArtworkDTO {
     private String storedLocation;
     private String collectionName;
     private String state;
+    private boolean borrowed;
 
     public int getIdartwork() {
         return idartwork;
@@ -29,11 +30,11 @@ public class ArtworkDTO {
         this.name = name;
     }
 
-    public String getAuthor_id() {
+    public String getAuthorName() {
         return authorName;
     }
 
-    public void setAuthor_id(String authorName) {
+    public void setAuthorName(String authorName) {
         this.authorName = authorName;
     }
 
@@ -69,19 +70,27 @@ public class ArtworkDTO {
         this.storedLocation = storedLocation;
     }
 
-    public String getCollectionId() {
+    public String getCollectionName() {
         return collectionName;
     }
 
-    public void setCollectionId(String collectionName) {
+    public void setCollectionName(String collectionName) {
         this.collectionName = collectionName;
     }
 
-    public String getStateId() {
+    public String getState() {
         return state;
     }
 
-    public void setStateId(String stateId) {
+    public void setState(String stateId) {
         this.state = state;
+    }
+
+    public boolean isBorrowed() {
+        return borrowed;
+    }
+
+    public void setBorrowed(boolean borrowed) {
+        this.borrowed = borrowed;
     }
 }

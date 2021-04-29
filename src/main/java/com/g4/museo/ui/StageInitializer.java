@@ -30,7 +30,7 @@ public class StageInitializer implements ApplicationListener<StageReadyEvent> {
             Parent root = loader.load();
             MainFxmlController mainFxmlController = (MainFxmlController) loader.getController();
             Scene mainScene= new Scene(root, 1280, 720);
-            mainFxmlController.populateArtworkGrid(artworkJdbcDao.getAllArtwork());
+            mainFxmlController.populateArtworkGrid(artworkJdbcDao.getAllArtwork(), artworkJdbcDao);
             stage.setScene(mainScene);
             stage.setTitle("Museo Application");
             //stage.setMaximized(true);
