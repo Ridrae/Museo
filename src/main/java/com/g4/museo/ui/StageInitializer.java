@@ -18,20 +18,19 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-public class StageInitializer implements ApplicationListener<StageReadyEvent> {
+public class StageInitializer{
 
     @Autowired
     ArtworkJdbcDao artworkJdbcDao;
 
+    Scene mainScene;
 
-    @Override
-    public void onApplicationEvent(StageReadyEvent event) {
-        Stage stage = event.getStage();
+    public void stageReadyEventHandler(Stage stage) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("ui.fxml"));
             Parent root = loader.load();
             MainFxmlController mainFxmlController = (MainFxmlController) loader.getController();
-            Scene mainScene= new Scene(root, 1280, 720);
+            mainScene= new Scene(root, 1280, 720);
             mainFxmlController.populateArtworkGrid(artworkJdbcDao.getAllArtwork(), artworkJdbcDao);
             stage.setScene(mainScene);
             stage.setTitle("Museo Application");
@@ -40,5 +39,9 @@ public class StageInitializer implements ApplicationListener<StageReadyEvent> {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void returnEventHandler(Stage stage){
+        stage.setScene(mainScene);
     }
 }

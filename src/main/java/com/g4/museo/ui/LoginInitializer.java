@@ -1,6 +1,7 @@
 package com.g4.museo.ui;
 
 import com.g4.museo.events.LoginCalledEvent;
+import com.g4.museo.events.ReturnCalledEvent;
 import com.g4.museo.events.StageReadyEvent;
 import com.g4.museo.ui.fxml.LoginFxmlController;
 import javafx.fxml.FXMLLoader;
@@ -31,6 +32,10 @@ public class LoginInitializer implements ApplicationListener<LoginCalledEvent> {
 
     static public void onLoginEvent(Stage stage){
         appContext.publishEvent(new LoginCalledEvent(stage));
+    }
+
+    static public void onReturnEvent(Stage stage){
+        appContext.publishEvent(new ReturnCalledEvent(stage));
     }
 
     @Override

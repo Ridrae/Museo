@@ -66,7 +66,7 @@ public class MainFxmlController {
     }
 
     @FXML
-    private void onLoginCalled(ActionEvent event){
+    public void onLoginCalled(ActionEvent event){
         Scene scene = (Scene) ((Node) event.getSource()).getScene();
         Stage stage = (Stage)scene.getWindow();
         LoginInitializer.onLoginEvent(stage);
