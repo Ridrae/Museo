@@ -3,6 +3,9 @@ package com.g4.museo.ui.fxml;
 import com.g4.museo.persistence.dto.ArtworkDTO;
 import com.g4.museo.persistence.jdbc.ArtworkJdbcDao;
 import com.g4.museo.ui.utils.ErrorWindowFactory;
+import com.g4.museo.ui.LoginInitializer;
+import com.g4.museo.ui.ManagementInitializer;
+import javafx.beans.Observable;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -86,5 +89,11 @@ public class MainFxmlController extends FXMLController implements Initializable 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         populateArtworkGrid();
+    }
+    @FXML
+    public void onManagementCalled(ActionEvent event){
+        Scene scene = (Scene) ((Node) event.getSource()).getScene();
+        Stage stage = (Stage)scene.getWindow();
+        ManagementInitializer.onManagementEvent(stage);
     }
 }
