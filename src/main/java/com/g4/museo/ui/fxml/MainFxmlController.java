@@ -56,7 +56,9 @@ public class MainFxmlController extends FXMLController implements Initializable 
         });
         TableColumn<ArtworkDTO, String> localisation = new TableColumn<>("Localisation");
         localisation.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getStoredLocation()));
-        artworkGrid.getColumns().addAll(name, artist, date, returnDate, localisation);
+        TableColumn<ArtworkDTO, String> state = new TableColumn<>("Statut");
+        state.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getState()));
+        artworkGrid.getColumns().addAll(name, artist, date, returnDate, localisation, state);
     }
 
     @FXML
@@ -67,9 +69,15 @@ public class MainFxmlController extends FXMLController implements Initializable 
         LoginFxmlController loginController = applicationContext.getBean(LoginFxmlController.class);
         Scene loginScene = null;
         try {
-            loginScene = new Scene(loginController.getView());
-            loginStage.setScene(loginScene);
-            loginStage.show();
+                if(loginController.getView().getScene() == null){
+                    loginScene = new Scene(loginController.getView());
+                } else if(loginController.getView().getScene().getWindow().isShowing()) {
+                    return;
+                } else {
+                    loginScene = loginController.getView().getScene();
+                }
+                loginStage.setScene(loginScene);
+                loginStage.show();
         } catch (IOException e) {
             ErrorWindowFactory.create(e);
         }
