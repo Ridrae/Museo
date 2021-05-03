@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.g4.museo.ui.fxml.ManagementFxmlController">
+   <children>
+      <AnchorPane layoutY="81.0" prefHeight="847.0" prefWidth="1280.0">
+         <children>
+            <TableView layoutX="39.0" layoutY="76.0" prefHeight="284.0" prefWidth="526.0">
+              <columns>
+                <TableColumn prefWidth="75.0" text="C1" />
+                <TableColumn prefWidth="75.0" text="C2" />
+              </columns>
+            </TableView>
+            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="202.0" layoutY="14.0" prefHeight="62.0" prefWidth="200.0" text="Les collections">
+               <font>
+                  <Font size="27.0" />
+               </font>
+            </Label>
+            <TableView layoutX="706.0" layoutY="76.0" prefHeight="284.0" prefWidth="526.0">
+               <columns>
+                  <TableColumn prefWidth="75.0" text="C1" />
+                  <TableColumn prefWidth="75.0" text="C2" />
+               </columns>
+            </TableView>
+            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="869.0" layoutY="14.0" prefHeight="62.0" prefWidth="200.0" text="Les propriétaires">
+               <font>
+                  <Font size="27.0" />
+               </font>
+            </Label>
+            <TableView layoutX="48.0" layoutY="506.0" prefHeight="284.0" prefWidth="526.0">
+               <columns>
+                  <TableColumn prefWidth="75.0" text="C1" />
+                  <TableColumn prefWidth="75.0" text="C2" />
+               </columns>
+            </TableView>
+            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="175.0" layoutY="444.0" prefHeight="62.0" prefWidth="254.0" text="Les types d'oeuvres">
+               <font>
+                  <Font size="27.0" />
+               </font>
+            </Label>
+            <TableView layoutX="707.0" layoutY="506.0" prefHeight="284.0" prefWidth="526.0">
+               <columns>
+                  <TableColumn prefWidth="75.0" text="C1" />
+                  <TableColumn prefWidth="75.0" text="C2" />
+               </columns>
+            </TableView>
+            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="848.0" layoutY="444.0" prefHeight="62.0" prefWidth="245.0" text="Les états d'oeuvres">
+               <font>
+                  <Font size="27.0" />
+               </font>
+            </Label>
+            <TextField layoutX="94.0" layoutY="382.0" prefHeight="25.0" prefWidth="183.0" promptText="Renseignez la collection" />
+            <Button layoutX="311.0" layoutY="382.0" mnemonicParsing="false" text="Ajouter la collection" />
+            <TextField layoutX="800.0" layoutY="382.0" prefHeight="25.0" prefWidth="183.0" promptText="Renseignez le propriétaire" />
+            <Button layoutX="1017.0" layoutY="382.0" mnemonicParsing="false" text="Ajouter le propriétaire" />
+            <TextField layoutX="94.0" layoutY="809.0" prefHeight="25.0" prefWidth="183.0" promptText="Renseignez le type d'oeuvre" />
+            <Button layoutX="311.0" layoutY="809.0" mnemonicParsing="false" text="Ajouter le type d'oeuvre" />
+            <TextField layoutX="800.0" layoutY="809.0" prefHeight="25.0" prefWidth="183.0" promptText="Renseignez l'état" />
+            <Button layoutX="1017.0" layoutY="809.0" mnemonicParsing="false" text="Ajouter l'état" />
+            <Button layoutX="407.0" layoutY="33.0" mnemonicParsing="false" text="Modifier" />
+            <Button layoutX="475.0" layoutY="33.0" mnemonicParsing="false" text="Supprimer" />
+            <Button layoutX="1084.0" layoutY="33.0" mnemonicParsing="false" text="Modifier" />
+            <Button layoutX="1152.0" layoutY="33.0" mnemonicParsing="false" text="Supprimer" />
+            <Button layoutX="429.0" layoutY="463.0" mnemonicParsing="false" text="Modifier" />
+            <Button layoutX="497.0" layoutY="463.0" mnemonicParsing="false" text="Supprimer" />
+            <Button layoutX="1093.0" layoutY="463.0" mnemonicParsing="false" text="Modifier" />
+            <Button layoutX="1161.0" layoutY="463.0" mnemonicParsing="false" text="Supprimer" />
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutY="-1.0" prefHeight="100.0" prefWidth="1280.0">
+         <children>
+            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="458.0" layoutY="19.0" prefHeight="62.0" prefWidth="365.0" text="PAGE GESTION">
+               <font>
+                  <Font size="42.0" />
+               </font>
+            </Label>
+            <Button layoutX="24.0" layoutY="38.0" mnemonicParsing="false" text="Retour" />
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

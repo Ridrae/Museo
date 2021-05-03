@@ -82,7 +82,7 @@ public class ArtworkDTO {
         return state;
     }
 
-    public void setState(String stateId) {
+    public void setState(String state) {
         this.state = state;
     }
 
