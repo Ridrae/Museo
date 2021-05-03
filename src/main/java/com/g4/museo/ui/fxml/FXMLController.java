@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class FXMLController {
 
-    Logger log = LoggerFactory.getLogger(FXMLController.class);
+    protected Logger log = LoggerFactory.getLogger(FXMLController.class);
 
     private static String prefix = "Controller";
 

@@ -9,11 +9,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.ApplicationEventMulticaster;
+import org.springframework.context.event.SimpleApplicationEventMulticaster;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 @SpringBootApplication
+@Configuration
 public class MuseoApplication extends Application {
 
     Logger log = LoggerFactory.getLogger(MuseoApplication.class);
@@ -69,5 +75,14 @@ public class MuseoApplication extends Application {
     public static void logout(){
         SecurityContextHolder.clearContext();
         initAnonymous();
+    }
+
+    @Bean(name = "applicationEventMulticaster")
+    public ApplicationEventMulticaster simpleApplicationEventMulticaster() {
+        SimpleApplicationEventMulticaster eventMulticaster =
+                new SimpleApplicationEventMulticaster();
+
+        eventMulticaster.setTaskExecutor(new SimpleAsyncTaskExecutor());
+        return eventMulticaster;
     }
 }

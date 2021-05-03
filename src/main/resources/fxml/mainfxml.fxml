@@ -30,8 +30,8 @@
                   </HBox>
                   <VBox prefHeight="87.0" prefWidth="92.0" style="-fx-spacing: 10; -fx-padding: 10 0 10 0;">
                      <children>
-                        <Button alignment="CENTER" mnemonicParsing="false" prefHeight="28.0" prefWidth="67.0" style="-fx-background-color: #2699FB;" text="Gestion" textFill="WHITE" />
-                        <Button alignment="CENTER" mnemonicParsing="false" prefHeight="30.0" prefWidth="66.0" style="-fx-background-color: #2699FB;" onAction="#onLoginCalled" text="Admin" textFill="WHITE" />
+                        <Button alignment="CENTER" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" style="-fx-background-color: #2699FB;" fx:id="managementButton" onAction="#onManagementCalled" text="Gestion" textFill="WHITE" />
+                        <Button alignment="CENTER" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" style="-fx-background-color: #2699FB;" fx:id="loginButton" onAction="#onLoginCalled" text="Connexion" textFill="WHITE" />
                      </children>
                   </VBox>
                </children></HBox>

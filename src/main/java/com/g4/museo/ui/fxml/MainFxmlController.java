@@ -1,5 +1,6 @@
 package com.g4.museo.ui.fxml;
 
+import com.g4.museo.event.UserChangedEvent;
 import com.g4.museo.persistence.dto.ArtworkDTO;
 import com.g4.museo.persistence.jdbc.ArtworkJdbcDao;
 import com.g4.museo.ui.utils.ErrorWindowFactory;
@@ -7,12 +8,18 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.event.EventListener;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -31,6 +38,12 @@ public class MainFxmlController extends FXMLController implements Initializable 
 
     @Autowired
     ConfigurableApplicationContext applicationContext;
+
+    @FXML
+    Button loginButton;
+
+    @FXML
+    Button managementButton;
 
     @FXML
     private TableView artworkGrid;
@@ -83,8 +96,42 @@ public class MainFxmlController extends FXMLController implements Initializable 
         }
     }
 
+    @EventListener(UserChangedEvent.class)
+    public void updateRoles(){
+        if(SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))){
+            managementButton.setVisible(true);
+            loginButton.setVisible(false);
+        } else {
+            managementButton.setVisible(false);
+            loginButton.setVisible(true);
+        }
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        updateRoles();
         populateArtworkGrid();
+    }
+
+    @FXML
+    public void onManagementCalled(ActionEvent event){
+        Stage managementStage = new Stage();
+        managementStage.setTitle("Museo Management");
+        managementStage.setResizable(false);
+        ManagementFxmlController managementController = applicationContext.getBean(ManagementFxmlController.class);
+        Scene managementScene = null;
+        try {
+            if(managementController.getView().getScene() == null){
+                managementScene = new Scene(managementController.getView());
+            } else if(managementController.getView().getScene().getWindow().isShowing()) {
+                return;
+            } else {
+                managementScene = managementController.getView().getScene();
+            }
+            managementStage.setScene(managementScene);
+            managementStage.show();
+        } catch (IOException e) {
+            ErrorWindowFactory.create(e);
+        }
     }
 }
