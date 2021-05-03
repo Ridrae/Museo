@@ -2,49 +2,43 @@ package com.g4.museo.ui.fxml;
 
 import com.g4.museo.persistence.dto.ArtworkDTO;
 import com.g4.museo.persistence.jdbc.ArtworkJdbcDao;
-import com.g4.museo.ui.LoginInitializer;
-import javafx.beans.Observable;
+import com.g4.museo.ui.utils.ErrorWindowFactory;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.control.Label;
+import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.Image;
 
 import java.io.IOException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.io.InputStream;
 import java.text.DateFormat;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.TimeZone;
-import java.util.concurrent.atomic.AtomicReference;
-
-import com.g4.museo.events.LoginCalledEvent;
 
 @Component
-public class MainFxmlController {
-    private ConfigurableApplicationContext applicationContext;
+public class MainFxmlController extends FXMLController implements Initializable {
+
+    @Autowired
+    ArtworkJdbcDao artworkJdbcDao;
+
+    @Autowired
+    ConfigurableApplicationContext applicationContext;
 
     @FXML
     private TableView artworkGrid;
 
-    public void populateArtworkGrid(List<ArtworkDTO> artworks, ArtworkJdbcDao artworkJdbcDao){
-        TimeZone tz = TimeZone.getDefault();
+    public void populateArtworkGrid(){
+        List<ArtworkDTO> artworks = artworkJdbcDao.getAllArtwork();
         DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-        df.setTimeZone(tz);
+        df.setTimeZone(TimeZone.getDefault());
         artworkGrid.getItems().addAll(artworks);
         TableColumn<ArtworkDTO, String> name = new TableColumn<>("Nom de l'oeuvre");
         name.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getName()));
@@ -66,10 +60,23 @@ public class MainFxmlController {
     }
 
     @FXML
-    private void onLoginCalled(ActionEvent event){
-        Scene scene = (Scene) ((Node) event.getSource()).getScene();
-        Stage stage = (Stage)scene.getWindow();
-        LoginInitializer.onLoginEvent(stage);
+    public void onLoginCalled(ActionEvent event){
+        Stage loginStage = new Stage();
+        loginStage.setTitle("Museo Login");
+        loginStage.setResizable(false);
+        LoginFxmlController loginController = applicationContext.getBean(LoginFxmlController.class);
+        Scene loginScene = null;
+        try {
+            loginScene = new Scene(loginController.getView());
+            loginStage.setScene(loginScene);
+            loginStage.show();
+        } catch (IOException e) {
+            ErrorWindowFactory.create(e);
+        }
     }
 
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        populateArtworkGrid();
+    }
 }

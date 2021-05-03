@@ -1,15 +1,73 @@
 package com.g4.museo;
 
-import com.g4.museo.ui.GuiApplication;
+import com.g4.museo.ui.fxml.MainFxmlController;
 import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @SpringBootApplication
-public class MuseoApplication {
+public class MuseoApplication extends Application {
 
-    public static void main(String[] args) {
+    Logger log = LoggerFactory.getLogger(MuseoApplication.class);
 
-        Application.launch(GuiApplication.class, args);
+    private static String[] initialArgs;
+
+    private ConfigurableApplicationContext applicationContext;
+
+    @Override
+    public void init() throws Exception {
+        log.info("Initializing Spring Context");
+        super.init();
+        applicationContext = SpringApplication.run(getClass(), initialArgs);
+        initSecurity();
     }
 
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        log.info("Starting JavaFx");
+        Stage stage = primaryStage;
+        stage.setTitle("Museo Application");
+        stage.setResizable(false);
+        MainFxmlController mainController = applicationContext.getBean(MainFxmlController.class);
+        Scene mainScene = new Scene(mainController.getView());
+        stage.setScene(mainScene);
+        stage.show();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        log.info("Stopping");
+        super.stop();
+    }
+
+    public static void main(String[] args) {
+        initialArgs = args;
+        launch(args);
+    }
+
+    public static void initSecurity() {
+        SecurityContextHolder.setStrategyName("MODE_GLOBAL");
+        initAnonymous();
+    }
+
+    public static void initAnonymous() {
+        AnonymousAuthenticationToken auth = new AnonymousAuthenticationToken(
+                "anonymous", "anonymous",
+                AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS"));
+
+        SecurityContextHolder.getContext().setAuthentication(auth);
+    }
+
+    public static void logout(){
+        SecurityContextHolder.clearContext();
+        initAnonymous();
+    }
 }
