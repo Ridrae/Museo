@@ -1,5 +1,6 @@
 package com.g4.museo.ui.fxml;
 
+import com.g4.museo.event.UserChangedEvent;
 import com.gluonhq.charm.glisten.control.TextField;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -11,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,6 +29,9 @@ import java.util.ResourceBundle;
 public class LoginFxmlController extends FXMLController implements Initializable {
     @Autowired
     private AuthenticationManager authManager;
+
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @FXML
     private TextField usernameField;
@@ -52,6 +57,7 @@ public class LoginFxmlController extends FXMLController implements Initializable
             Authentication request = new UsernamePasswordAuthenticationToken(userName, userPassword);
             Authentication result = authManager.authenticate(request);
             SecurityContextHolder.getContext().setAuthentication(result);
+            applicationEventPublisher.publishEvent(new UserChangedEvent(this));
             Alert alertSuccessfulLogin = new Alert(Alert.AlertType.INFORMATION);
             alertSuccessfulLogin.setHeaderText("Successful Login");
             alertSuccessfulLogin.setContentText("Successfully logged in as " + SecurityContextHolder.getContext().getAuthentication().getName());
