@@ -22,7 +22,7 @@
                   <Font size="39.0" />
                </font>
             </Label>
-            <Button layoutX="32.0" layoutY="37.0" onAction="#onReturn" mnemonicParsing="false" text="Retour" />
+            <Button layoutX="32.0" layoutY="37.0" mnemonicParsing="false" onAction="#onReturn" text="Retour" />
             <AnchorPane layoutX="14.0" layoutY="395.0" prefHeight="258.0" prefWidth="611.0" style="-fx-border-color: Black;">
                <children>
                   <TextField layoutX="81.0" layoutY="24.0" prefHeight="25.0" prefWidth="210.0" promptText="Saisissez l'artiste" />
