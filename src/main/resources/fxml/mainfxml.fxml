@@ -2,9 +2,9 @@
 
 <?import com.gluonhq.charm.glisten.control.TextField?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -30,8 +30,8 @@
                   </HBox>
                   <VBox prefHeight="87.0" prefWidth="92.0" style="-fx-spacing: 10; -fx-padding: 10 0 10 0;">
                      <children>
-                        <Button alignment="CENTER" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" style="-fx-background-color: #2699FB;" fx:id="managementButton" onAction="#onManagementCalled" text="Gestion" textFill="WHITE" />
-                        <Button alignment="CENTER" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" style="-fx-background-color: #2699FB;" fx:id="loginButton" onAction="#onLoginCalled" text="Connexion" textFill="WHITE" />
+                        <Button fx:id="managementButton" alignment="CENTER" mnemonicParsing="false" onAction="#onManagementCalled" prefHeight="30.0" prefWidth="80.0" style="-fx-background-color: #2699FB;" text="Gestion" textFill="WHITE" />
+                        <Button fx:id="loginButton" alignment="CENTER" mnemonicParsing="false" onAction="#onLoginCalled" prefHeight="30.0" prefWidth="80.0" style="-fx-background-color: #2699FB;" text="Connexion" textFill="WHITE" />
                      </children>
                   </VBox>
                </children></HBox>
@@ -41,14 +41,15 @@
                      <children>
                         <TextField promptText="Rechercher une oeuvre" style="-fx-padding: 15 0 0 0;" />
                         <TextField promptText="Rechercher un artiste" style="-fx-padding: 15 0 0 0;" />
-                        <CheckBox mnemonicParsing="false" text="Oeuvres à rendre (urgent)" />
-                        <CheckBox mnemonicParsing="false" text="Oeuvres à rendre (1mois)" />
-                        <ComboBox prefWidth="150.0" promptText="Collection" />
+                        <RadioButton mnemonicParsing="false" text="Oeuvres à rendre (urgent)" />
+                        <RadioButton mnemonicParsing="false" text="Oeuvres à rendre (1mois)" />
+                        <ComboBox prefHeight="25.0" prefWidth="117.0" promptText="Collection" />
+                        <ComboBox prefHeight="25.0" prefWidth="94.0" promptText="Statut" />
                      </children>
                   </HBox>
                   <HBox prefHeight="56.0" prefWidth="281.0" style="-fx-alignment: CENTER; -fx-padding: 0 0 0 10;">
                      <children>
-                        <Button mnemonicParsing="false" style="-fx-background-color: #2699FB;" fx:id="artworkButton" onAction="#onArtworkCalled" text="Ajouter une nouvelle oeuvre" textFill="WHITE" />
+                        <Button fx:id="artworkButton" mnemonicParsing="false" onAction="#onArtworkCalled" style="-fx-background-color: #2699FB;" text="Ajouter une nouvelle oeuvre" textFill="WHITE" />
                      </children>
                   </HBox>
                </children>
