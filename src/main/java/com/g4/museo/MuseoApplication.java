@@ -1,25 +1,31 @@
 package com.g4.museo;
 
 import com.g4.museo.ui.fxml.MainFxmlController;
+import com.g4.museo.ui.utils.CachingManager;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 @SpringBootApplication
 @Configuration
+@EnableScheduling
+@EnableCaching
 public class MuseoApplication extends Application {
 
     Logger log = LoggerFactory.getLogger(MuseoApplication.class);
@@ -52,6 +58,8 @@ public class MuseoApplication extends Application {
     public void stop() throws Exception {
         log.info("Stopping");
         super.stop();
+        applicationContext.close();
+        AppStarter.stop();
     }
 
     public static void main(String[] args) {

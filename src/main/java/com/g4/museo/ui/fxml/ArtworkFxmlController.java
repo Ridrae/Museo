@@ -1,5 +1,6 @@
 package com.g4.museo.ui.fxml;
 
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import org.springframework.stereotype.Component;
 
@@ -11,4 +12,9 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
     @Override
     public void initialize(URL location, ResourceBundle resources){
     }
+
+    @FXML
+    public void addArtwork(){
+
+     }
 }

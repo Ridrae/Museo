@@ -37,14 +37,14 @@
                </children></HBox>
             <HBox prefHeight="63.0" prefWidth="1280.0">
                <children>
-                  <HBox alignment="BOTTOM_CENTER" prefHeight="56.0" prefWidth="998.0" style="-fx-padding: 0 0 0 10; -fx-spacing: 50; -fx-alignment: CENTER-LEFT;">
+                  <HBox alignment="BOTTOM_CENTER" prefHeight="56.0" prefWidth="998.0" style="-fx-padding: 0 0 0 10; -fx-spacing: 30; -fx-alignment: CENTER-LEFT;">
                      <children>
-                        <TextField promptText="Rechercher une oeuvre" style="-fx-padding: 15 0 0 0;" />
-                        <TextField promptText="Rechercher un artiste" style="-fx-padding: 15 0 0 0;" />
-                        <RadioButton mnemonicParsing="false" text="Oeuvres à rendre (urgent)" />
-                        <RadioButton mnemonicParsing="false" text="Oeuvres à rendre (1mois)" />
-                        <ComboBox prefHeight="25.0" prefWidth="117.0" promptText="Collection" />
-                        <ComboBox prefHeight="25.0" prefWidth="94.0" promptText="Statut" />
+                        <TextField fx:id="artworkSearch" promptText="Rechercher une oeuvre" style="-fx-padding: 15 0 0 0;" />
+                        <TextField fx:id="authorSearch" promptText="Rechercher un artiste" style="-fx-padding: 15 0 0 0;" />
+                        <RadioButton prefWidth="180" mnemonicParsing="false" text="Oeuvres à rendre (urgent)" />
+                        <RadioButton prefWidth="180" mnemonicParsing="false" text="Oeuvres à rendre (1mois)" />
+                        <ComboBox prefHeight="25.0" prefWidth="110.0" fx:id="collectionBox" promptText="Collection" />
+                        <ComboBox prefHeight="25.0" prefWidth="110.0" fx:id="stateBox" promptText="Statut" />
                      </children>
                   </HBox>
                   <HBox prefHeight="56.0" prefWidth="281.0" style="-fx-alignment: CENTER; -fx-padding: 0 0 0 10;">

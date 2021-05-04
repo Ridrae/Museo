@@ -1,23 +1,29 @@
 package com.g4.museo.ui.fxml;
 
+import com.g4.museo.event.ArtworkRefreshedEvent;
 import com.g4.museo.event.UserChangedEvent;
 import com.g4.museo.persistence.dto.ArtworkDTO;
+import com.g4.museo.persistence.dto.CollectionDTO;
+import com.g4.museo.persistence.dto.StateDTO;
 import com.g4.museo.persistence.jdbc.ArtworkJdbcDao;
+import com.g4.museo.persistence.jdbc.CollectionJdbcDao;
+import com.g4.museo.persistence.jdbc.StateJdbcDao;
 import com.g4.museo.ui.utils.ErrorWindowFactory;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.EventListener;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -30,6 +36,10 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
 
+import java.util.stream.Collectors;
+
+import com.gluonhq.charm.glisten.control.TextField;
+
 @Component
 public class MainFxmlController extends FXMLController implements Initializable {
 
@@ -37,18 +47,36 @@ public class MainFxmlController extends FXMLController implements Initializable 
     ArtworkJdbcDao artworkJdbcDao;
 
     @Autowired
+    CollectionJdbcDao collectionJdbcDao;
+
+    @Autowired
+    StateJdbcDao stateJdbcDao;
+
+    @Autowired
     ConfigurableApplicationContext applicationContext;
 
     @FXML
-    Button loginButton;
+    private Button loginButton;
 
     @FXML
-    Button managementButton;
+    private Button managementButton;
 
     @FXML
     private TableView artworkGrid;
 
-    public void populateArtworkGrid(){
+    @FXML
+    private ComboBox collectionBox;
+
+    @FXML
+    private ComboBox stateBox;
+
+    @FXML
+    private TextField artworkSearch;
+
+    @FXML
+    private TextField authorSearch;
+
+    private void populateArtworkGrid(){
         List<ArtworkDTO> artworks = artworkJdbcDao.getAllArtwork();
         DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
         df.setTimeZone(TimeZone.getDefault());
@@ -72,6 +100,71 @@ public class MainFxmlController extends FXMLController implements Initializable 
         TableColumn<ArtworkDTO, String> state = new TableColumn<>("Statut");
         state.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getState()));
         artworkGrid.getColumns().addAll(name, artist, date, returnDate, localisation, state);
+    }
+
+    private void populateComboBox(){
+        collectionBox.getItems().addAll(collectionJdbcDao.getCollections()
+                .stream()
+                .map(CollectionDTO::getColectionName)
+                .collect(Collectors.toList()));
+        collectionBox.getItems().add(null);
+        collectionBox.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                ComboBox box = (ComboBox) event.getSource();
+                FilteredList<ArtworkDTO> filteredData = new FilteredList(FXCollections.observableArrayList(artworkJdbcDao.getAllArtwork()));
+                if(box.getValue()!=null){
+                    filteredData.setPredicate(a -> a.getCollectionName()
+                            .equalsIgnoreCase(box.getValue().toString()));
+                }
+                artworkGrid.setItems(filteredData);
+            }
+        });
+        stateBox.getItems().addAll(stateJdbcDao.getStates()
+                .stream()
+                .map(StateDTO::getStateName)
+                .collect(Collectors.toList()));
+        stateBox.getItems().add(null);
+        stateBox.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                ComboBox box = (ComboBox) event.getSource();
+                FilteredList<ArtworkDTO> filteredData = new FilteredList(FXCollections.observableArrayList(artworkJdbcDao.getAllArtwork()));
+                if(box.getValue()!=null){
+                    filteredData.setPredicate(a -> a.getState()
+                            .equalsIgnoreCase(box.getValue().toString()));
+                }
+                artworkGrid.setItems(filteredData);
+            }
+        });
+    }
+
+    private void initSearchBars(){
+        artworkSearch.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                FilteredList<ArtworkDTO> filteredData = new FilteredList(FXCollections.observableArrayList(artworkJdbcDao.getAllArtwork()));
+                if(!newValue.equals("")){
+                    filteredData.setPredicate(a -> a.getName()
+                            .toLowerCase()
+                            .contains(newValue.toLowerCase()));
+                }
+                artworkGrid.setItems(filteredData);
+            }
+        });
+        authorSearch.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                FilteredList<ArtworkDTO> filteredData = new FilteredList(FXCollections.observableArrayList(artworkJdbcDao.getAllArtwork()));
+                if(!newValue.equals("")){
+                    filteredData.setPredicate(a -> a.getAuthorName()
+                            .toLowerCase()
+                            .contains(newValue.toLowerCase()));
+                }
+                artworkGrid.setItems(filteredData);
+            }
+        });
+
     }
 
     @FXML
@@ -107,10 +200,19 @@ public class MainFxmlController extends FXMLController implements Initializable 
         }
     }
 
+
+    @EventListener(ArtworkRefreshedEvent.class)
+    public void updateArtworks(){
+        artworkGrid.getItems().removeAll();
+        artworkGrid.getItems().addAll(artworkJdbcDao.getAllArtwork());
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         updateRoles();
         populateArtworkGrid();
+        populateComboBox();
+        initSearchBars();
     }
 
     @FXML

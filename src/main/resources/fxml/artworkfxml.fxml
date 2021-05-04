@@ -109,7 +109,7 @@
                   <Font size="21.0" />
                </font>
             </Label>
-            <Button layoutX="577.0" layoutY="669.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="127.0" text="Modifier" />
+            <Button layoutX="577.0" layoutY="669.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="127.0" onAction="#addArtwork" text="Ajouter" />
             <TextArea layoutX="751.0" layoutY="153.0" prefHeight="155.0" prefWidth="419.0" />
             <Label layoutX="875.0" layoutY="114.0" text="Texte descriptif :" underline="true">
                <font>

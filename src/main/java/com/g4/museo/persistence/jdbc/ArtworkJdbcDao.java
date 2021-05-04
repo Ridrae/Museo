@@ -3,6 +3,7 @@ package com.g4.museo.persistence.jdbc;
 import com.g4.museo.persistence.dto.ArtworkDTO;
 import com.g4.museo.persistence.dto.ArtworkDetailDTO;
 import com.g4.museo.persistence.factory.GenericJdbcDao;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
@@ -16,6 +17,7 @@ import java.util.Map;
 
 @Repository
 public class ArtworkJdbcDao extends GenericJdbcDao {
+    @Cacheable("artworks")
     public List<ArtworkDTO> getAllArtwork(){
         StringBuilder sql = new StringBuilder("SELECT a.idartwork, a.name, a.picture, a.date, a.certified, a.stored_location, au.fullname AS author_name, c.name AS collection_name, s.state_name, a.borrowed ");
         sql.append("FROM  artwork AS a JOIN author AS au ON a.author_id = au.idauthor ");
@@ -58,6 +60,7 @@ public class ArtworkJdbcDao extends GenericJdbcDao {
         return res;
     }
 
+    @Cacheable("returnDate")
     public Timestamp getReturnDateByID(int id){
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("id", id);
