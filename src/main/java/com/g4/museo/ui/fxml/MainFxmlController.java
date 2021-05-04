@@ -134,4 +134,27 @@ public class MainFxmlController extends FXMLController implements Initializable 
             ErrorWindowFactory.create(e);
         }
     }
+
+
+    @FXML
+    public void onArtworkCalled(ActionEvent event){
+        Stage artworkStage = new Stage();
+        artworkStage.setTitle("Museo Artwork");
+        artworkStage.setResizable(false);
+        ArtworkFxmlController artworkController = applicationContext.getBean(ArtworkFxmlController.class);
+        Scene artworkScene = null;
+        try {
+            if(artworkController.getView().getScene() == null){
+                artworkScene = new Scene(artworkController.getView());
+            } else if(artworkController.getView().getScene().getWindow().isShowing()) {
+                return;
+            } else {
+                artworkScene = artworkController.getView().getScene();
+            }
+            artworkStage.setScene(artworkScene);
+            artworkStage.show();
+        } catch (IOException e) {
+            ErrorWindowFactory.create(e);
+        }
+    }
 }

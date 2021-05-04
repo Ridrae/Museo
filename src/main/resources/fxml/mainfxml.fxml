@@ -48,7 +48,7 @@
                   </HBox>
                   <HBox prefHeight="56.0" prefWidth="281.0" style="-fx-alignment: CENTER; -fx-padding: 0 0 0 10;">
                      <children>
-                        <Button mnemonicParsing="false" style="-fx-background-color: #2699FB;" text="Ajouter une nouvelle oeuvre" textFill="WHITE" />
+                        <Button mnemonicParsing="false" style="-fx-background-color: #2699FB;" fx:id="artworkButton" onAction="#onArtworkCalled" text="Ajouter une nouvelle oeuvre" textFill="WHITE" />
                      </children>
                   </HBox>
                </children>
