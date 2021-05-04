@@ -5,6 +5,7 @@ import com.g4.museo.persistence.dto.ArtworkDetailDTO;
 import com.g4.museo.persistence.factory.GenericJdbcDao;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
@@ -73,5 +74,20 @@ public class ArtworkJdbcDao extends GenericJdbcDao {
             }
         };
         return getNamedParameterJdbcTemplate().query(sql.toString(), params, rm).get(0);
+    }
+
+    public void createArtwork(ArtworkDTO artwork) {
+        SimpleJdbcInsert insert = new SimpleJdbcInsert(getJdbcTemplate()).withTableName("artwork").usingGeneratedKeyColumns("idartwork");
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("name", artwork.getName());
+        params.put("author_id", artwork.getAuthorName());
+        params.put("picture", artwork.getPicture());
+        params.put("date", artwork.getDate());
+        params.put("certified", artwork.isCertified());
+        params.put("stored_location", artwork.getStoredLocation());
+        params.put("collection_id", artwork.getCollectionName());
+        params.put("state_id", artwork.getState());
+        params.put("borrowed", artwork.isBorrowed());
+        int key = insert.executeAndReturnKey(params).intValue();
     }
 }
