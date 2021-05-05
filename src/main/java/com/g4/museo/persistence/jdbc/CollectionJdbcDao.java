@@ -15,7 +15,7 @@ public class CollectionJdbcDao extends GenericJdbcDao {
         List<CollectionDTO> res = getJdbcTemplate().query(sql.toString(), (rs, i) -> {
             CollectionDTO c = new CollectionDTO();
             c.setCollectionID(rs.getInt("idcollection"));
-            c.setColectionName(rs.getString("name"));
+            c.setCollectionName(rs.getString("name"));
             return c;
         });
         return res;
