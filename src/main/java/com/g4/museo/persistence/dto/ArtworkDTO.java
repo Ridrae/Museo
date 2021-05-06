@@ -5,14 +5,15 @@ import java.sql.Timestamp;
 public class ArtworkDTO {
     private int idartwork;
     private String name;
-    private String authorName;
+    private int authorID;
     byte[] picture;
     private Timestamp date;
     private boolean certified;
     private String storedLocation;
-    private String collectionName;
-    private String state;
+    private int collectionID;
+    private int stateID;
     private boolean borrowed;
+    private String desc;
 
     public int getIdartwork() {
         return idartwork;
@@ -28,14 +29,6 @@ public class ArtworkDTO {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getAuthorName() {
-        return authorName;
-    }
-
-    public void setAuthorName(String authorName) {
-        this.authorName = authorName;
     }
 
     public byte[] getPicture() {
@@ -70,27 +63,43 @@ public class ArtworkDTO {
         this.storedLocation = storedLocation;
     }
 
-    public String getCollectionName() {
-        return collectionName;
-    }
-
-    public void setCollectionName(String collectionName) {
-        this.collectionName = collectionName;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
     public boolean isBorrowed() {
         return borrowed;
     }
 
     public void setBorrowed(boolean borrowed) {
         this.borrowed = borrowed;
+    }
+
+    public int getAuthorID() {
+        return authorID;
+    }
+
+    public void setAuthorID(int authorID) {
+        this.authorID = authorID;
+    }
+
+    public int getCollectionID() {
+        return collectionID;
+    }
+
+    public void setCollectionID(int collectionID) {
+        this.collectionID = collectionID;
+    }
+
+    public int getStateID() {
+        return stateID;
+    }
+
+    public void setStateID(int stateID) {
+        this.stateID = stateID;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 }

@@ -30,8 +30,9 @@
                   </HBox>
                   <VBox prefHeight="87.0" prefWidth="92.0" style="-fx-spacing: 10; -fx-padding: 10 0 10 0;">
                      <children>
-                        <Button fx:id="managementButton" alignment="CENTER" mnemonicParsing="false" onAction="#onManagementCalled" prefHeight="30.0" prefWidth="80.0" style="-fx-background-color: #2699FB;" text="Gestion" textFill="WHITE" />
-                        <Button fx:id="loginButton" alignment="CENTER" mnemonicParsing="false" onAction="#onLoginCalled" prefHeight="30.0" prefWidth="80.0" style="-fx-background-color: #2699FB;" text="Connexion" textFill="WHITE" />
+                        <Button fx:id="managementButton" alignment="CENTER" mnemonicParsing="false" onAction="#onManagementCalled" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: #2699FB;" text="Gestion" textFill="WHITE" />
+                        <Button fx:id="logoutButton" alignment="CENTER" mnemonicParsing="false" onAction="#onLogoutCalled" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: #2699FB;" text="Déconnexion" textFill="WHITE" />
+                        <Button fx:id="loginButton" alignment="CENTER" mnemonicParsing="false" onAction="#onLoginCalled" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: #2699FB;" text="Connexion" textFill="WHITE" />
                      </children>
                   </VBox>
                </children></HBox>
