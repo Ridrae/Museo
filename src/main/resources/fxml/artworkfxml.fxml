@@ -34,8 +34,8 @@
                         <Font size="15.0" />
                      </font>
                   </CheckBox>
-                  <ComboBox layoutX="364.0" layoutY="90.0" prefWidth="150.0" promptText="Propriétaire" />
-                  <ComboBox layoutX="364.0" layoutY="166.0" prefWidth="150.0" promptText="Collection" />
+                  <ComboBox fx:id="ownerBox" layoutX="364.0" layoutY="90.0" prefWidth="150.0" promptText="Propriétaire" />
+                  <ComboBox fx:id="collectionBox" layoutX="364.0" layoutY="166.0" prefWidth="150.0" promptText="Collection" />
                   <Label alignment="CENTER" contentDisplay="CENTER" layoutX="14.0" layoutY="24.0" prefHeight="25.0" prefWidth="52.0" text="Artiste">
                      <font>
                         <Font size="16.0" />

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @EnableAsync
 public class CachingManager {
     @Async
-    @Scheduled(fixedRate = 10000)
-    @CacheEvict(value = {"artworks", "returnDate"}, allEntries = true)
+    @Scheduled(fixedRate = 5000)
+    @CacheEvict(value = {"artworks", "returnDate", "collections", "owners"}, allEntries = true)
     public void cleanCache(){}
 }
