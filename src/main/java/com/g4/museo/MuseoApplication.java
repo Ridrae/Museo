@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -78,11 +79,6 @@ public class MuseoApplication extends Application {
                 AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS"));
 
         SecurityContextHolder.getContext().setAuthentication(auth);
-    }
-
-    public static void logout(){
-        SecurityContextHolder.clearContext();
-        initAnonymous();
     }
 
     @Bean(name = "applicationEventMulticaster")

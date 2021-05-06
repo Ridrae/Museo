@@ -78,27 +78,7 @@ public class ArtworkJdbcDao extends GenericJdbcDao {
 
             r.getStateDTO().setStateID(rs.getInt("state_id"));
             r.getStateDTO().setStateName(rs.getString("state_name"));
-            
-            return r;
-        });
-        return res;
-    }
 
-    public ArtworkDetailDTO getArtworkDetailByID(int id) {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("id", id);
-        StringBuilder sql = new StringBuilder("SELECT * FROM artwork_details WHERE idartwork = :id");
-        ArtworkDetailDTO res = getNamedParameterJdbcTemplate().query(sql.toString(), params, (rs) -> {
-            ArtworkDetailDTO r = new ArtworkDetailDTO();
-            r.setIdartwork(rs.getInt("idartwork"));
-            r.setWidth(rs.getString("width"));
-            r.setHeight(rs.getString("height"));
-            r.setPerimeter(rs.getString("perimeter"));
-            r.setInsuranceNumber(rs.getString("insurance_number"));
-            r.setMaterial(rs.getString("material"));
-            r.setTechnic(rs.getString("technic"));
-            r.setType(rs.getString("type"));
-            r.setRestored(rs.getBoolean("is_restored"));
             return r;
         });
         return res;
@@ -119,18 +99,41 @@ public class ArtworkJdbcDao extends GenericJdbcDao {
         return getNamedParameterJdbcTemplate().query(sql.toString(), params, rm).get(0);
     }
 
-    public void createArtwork(ArtworkDTO artwork) {
+    public void createArtwork(ArtworkFullDTO artwork) {
         SimpleJdbcInsert insert = new SimpleJdbcInsert(getJdbcTemplate()).withTableName("artwork").usingGeneratedKeyColumns("idartwork");
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("name", artwork.getName());
-        params.put("author_id", artwork.getAuthorID());
-        params.put("picture", artwork.getPicture());
-        params.put("date", artwork.getDate());
-        params.put("certified", artwork.isCertified());
-        params.put("stored_location", artwork.getStoredLocation());
-        params.put("collection_id", artwork.getCollectionID());
-        params.put("state_id", artwork.getStateID());
-        params.put("borrowed", artwork.isBorrowed());
+        params.put("name", artwork.getArtworkDTO().getName());
+        params.put("author_id", artwork.getArtworkDTO().getAuthorID());
+        params.put("picture", artwork.getArtworkDTO().getPicture());
+        params.put("date", artwork.getArtworkDTO().getDate());
+        params.put("certified", artwork.getArtworkDTO().isCertified());
+        params.put("stored_location", artwork.getArtworkDTO().getStoredLocation());
+        params.put("collection_id", artwork.getArtworkDTO().getCollectionID());
+        params.put("state_id", artwork.getArtworkDTO().getStateID());
+        params.put("borrowed", artwork.getArtworkDTO().isBorrowed());
         int key = insert.executeAndReturnKey(params).intValue();
+
+        insert = new SimpleJdbcInsert(getJdbcTemplate()).withTableName("artwork_borrow");
+        params = new HashMap<String, Object>();
+        params.put("idartwork", key);
+        params.put("idowner", artwork.getArtworkBorrowDTO().getIdowner());
+        params.put("date_borrowed", artwork.getArtworkBorrowDTO().getDateBorrowed());
+        params.put("date_return", artwork.getArtworkBorrowDTO().getReturnDate());
+        params.put("is_stored", artwork.getArtworkBorrowDTO().isStored());
+        params.put("is_long_term", artwork.getArtworkBorrowDTO().isLongTerm());
+        insert.execute(params);
+
+        insert = new SimpleJdbcInsert(getJdbcTemplate()).withTableName("artwork_details");
+        params = new HashMap<String, Object>();
+        params.put("idartwork", key);
+        params.put("width", artwork.getArtworkDetailDTO().getWidth());
+        params.put("height", artwork.getArtworkDetailDTO().getHeight());
+        params.put("perimeter", artwork.getArtworkDetailDTO().getPerimeter());
+        params.put("insurance_number", artwork.getArtworkDetailDTO().getInsuranceNumber());
+        params.put("material", artwork.getArtworkDetailDTO().getInsuranceNumber());
+        params.put("technic", artwork.getArtworkDetailDTO().getTechnic());
+        params.put("type", artwork.getArtworkDetailDTO().getType());
+        params.put("is_restored", artwork.getArtworkDetailDTO().isRestored());
+        insert.execute(params);
     }
 }

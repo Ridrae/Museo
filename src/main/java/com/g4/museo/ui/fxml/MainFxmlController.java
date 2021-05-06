@@ -1,5 +1,6 @@
 package com.g4.museo.ui.fxml;
 
+import com.g4.museo.MuseoApplication;
 import com.g4.museo.event.ArtworkRefreshedEvent;
 import com.g4.museo.event.UserChangedEvent;
 import com.g4.museo.persistence.dto.ArtworkDTO;
@@ -23,6 +24,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -56,11 +58,17 @@ public class MainFxmlController extends FXMLController implements Initializable 
     @Autowired
     ConfigurableApplicationContext applicationContext;
 
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
+
     @FXML
     private Button loginButton;
 
     @FXML
     private Button managementButton;
+
+    @FXML
+    private Button logoutButton;
 
     @FXML
     private TableView artworkGrid;
@@ -190,14 +198,27 @@ public class MainFxmlController extends FXMLController implements Initializable 
         }
     }
 
+    @FXML
+    public void onLogoutCalled(){
+        SecurityContextHolder.clearContext();
+        MuseoApplication.initAnonymous();
+        applicationEventPublisher.publishEvent(new UserChangedEvent(this));
+        Alert AlertSuccessfulLogout = new Alert(Alert.AlertType.INFORMATION);
+        AlertSuccessfulLogout.setHeaderText("Successful Logout");
+        AlertSuccessfulLogout.setContentText("Successfully logged out");
+        AlertSuccessfulLogout.showAndWait();
+    }
+
     @EventListener(UserChangedEvent.class)
     public void updateRoles(){
         if(SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))){
             managementButton.setVisible(true);
             loginButton.setVisible(false);
+            logoutButton.setVisible(true);
         } else {
             managementButton.setVisible(false);
             loginButton.setVisible(true);
+            logoutButton.setVisible(false);
         }
     }
 
