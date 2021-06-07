@@ -15,85 +15,100 @@
    <children>
       <AnchorPane prefHeight="720.0" prefWidth="1280.0">
          <children>
-            <ImageView fitHeight="264.0" fitWidth="529.0" layoutX="32.0" layoutY="79.0" pickOnBounds="true" preserveRatio="true" />
-            <Button layoutX="589.0" layoutY="79.0" mnemonicParsing="false" text="Ajouter une image" />
+            <ImageView fx:id="pictureView" fitHeight="264.0" fitWidth="529.0" layoutX="32.0" layoutY="79.0" pickOnBounds="true" preserveRatio="true" />
+            <Button layoutX="589.0" layoutY="79.0" mnemonicParsing="false" onAction="#onAddPicture" text="Ajouter une image" />
             <Label alignment="CENTER" layoutX="486.0" layoutY="9.0" prefHeight="56.0" prefWidth="309.0" text="Titre de l'oeuvre">
                <font>
                   <Font size="39.0" />
                </font>
             </Label>
             <Button layoutX="32.0" layoutY="37.0" mnemonicParsing="false" onAction="#onReturn" text="Retour" />
-            <AnchorPane layoutX="14.0" layoutY="395.0" prefHeight="258.0" prefWidth="611.0" style="-fx-border-color: Black;">
+            <AnchorPane layoutX="14.0" layoutY="395.0" prefHeight="260.0" maxHeight="260" prefWidth="611.0" style="-fx-border-color: Black;">
                <children>
-                  <TextField layoutX="81.0" layoutY="24.0" prefHeight="25.0" prefWidth="210.0" promptText="Saisissez l'artiste" />
-                  <DatePicker layoutX="142.0" layoutY="64.0" prefHeight="25.0" prefWidth="149.0" promptText="Date de création" />
-                  <DatePicker layoutX="115.0" layoutY="109.0" prefHeight="25.0" prefWidth="170.0" promptText="Saisissez la date de prêt" />
-                  <TextField layoutX="115.0" layoutY="153.0" promptText="Saisissez la localisation" />
-                  <CheckBox layoutX="20.0" layoutY="199.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="221.0" text="A un certificat d'authenticité">
-                     <font>
-                        <Font size="15.0" />
-                     </font>
-                  </CheckBox>
-                  <ComboBox fx:id="ownerBox" layoutX="364.0" layoutY="90.0" prefWidth="150.0" promptText="Propriétaire" />
-                  <ComboBox fx:id="collectionBox" layoutX="364.0" layoutY="166.0" prefWidth="150.0" promptText="Collection" />
-                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="14.0" layoutY="24.0" prefHeight="25.0" prefWidth="52.0" text="Artiste">
+                  <TextField fx:id="authorField" layoutX="220.0" layoutY="12.0" prefHeight="25.0" prefWidth="180.0" promptText="Artiste" />
+                  <TextField fx:id="nameField" layoutX="220.0" layoutY="54.0" prefHeight="25.0" prefWidth="180.0" promptText="Titre" />
+                  <DatePicker fx:id="dateField" layoutX="220.0" layoutY="96.0" prefHeight="25.0" prefWidth="180.0" promptText="Date de création" />
+                  <DatePicker fx:id="borrowField" layoutX="220.0" layoutY="138.0" prefHeight="25.0" prefWidth="180.0" promptText="Date de prêt" />
+                  <DatePicker fx:id="returnField" layoutX="410.0" layoutY="138.0" prefHeight="25.0" prefWidth="180.0" promptText="Date de rendu" />
+                  <TextField fx:id="stateField" layoutX="220.0" layoutY="180.0" prefWidth="180.0" promptText="Localisation" />
+                  <CheckBox fx:id="certificateBox" layoutX="220.0" layoutY="222.0" mnemonicParsing="false" prefHeight="25.0"/>
+                  <CheckBox fx:id="storedBox" layoutX="360.0" layoutY="222.0" mnemonicParsing="false" prefHeight="25.0"/>
+                  <ComboBox fx:id="ownerBox" layoutX="410.0" layoutY="12.0" prefWidth="180.0" promptText="Propriétaire" />
+                  <ComboBox fx:id="collectionBox" layoutX="410.0" layoutY="54.0" prefWidth="180.0" promptText="Collection" />
+                  <ComboBox fx:id="stateBox" layoutX="410.0" layoutY="96.0" prefWidth="180.0" promptText="Statut" />
+                  <Label alignment="CENTER_LEFT" contentDisplay="CENTER" layoutX="22.0" layoutY="12.0" prefHeight="25.0" prefWidth="180.0" text="Artiste:">
                      <font>
                         <Font size="16.0" />
                      </font>
                   </Label>
-                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="14.0" layoutY="64.0" prefHeight="25.0" prefWidth="116.0" text="Date de création">
+                  <Label alignment="CENTER_LEFT" contentDisplay="CENTER" layoutX="22.0" layoutY="54.0" prefHeight="25.0" prefWidth="180.0" text="Titre:">
                      <font>
-                        <Font size="15.0" />
+                        <Font size="16.0" />
                      </font>
                   </Label>
-                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="14.0" layoutY="109.0" prefHeight="25.0" prefWidth="88.0" text="Date de prêt">
+                  <Label alignment="CENTER_LEFT" contentDisplay="CENTER" layoutX="22.0" layoutY="96.0" prefHeight="25.0" prefWidth="180.0" text="Date de création:">
                      <font>
-                        <Font size="15.0" />
+                        <Font size="16.0" />
                      </font>
                   </Label>
-                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="14.0" layoutY="153.0" prefHeight="25.0" prefWidth="88.0" text="Localisation">
+                  <Label alignment="CENTER_LEFT" contentDisplay="CENTER" layoutX="22.0" layoutY="138.0" prefHeight="25.0" prefWidth="180.0" text="Date de prêt et rendu:">
                      <font>
-                        <Font size="15.0" />
+                        <Font size="16.0" />
                      </font>
                   </Label>
-                  <TextField layoutX="390.0" layoutY="23.0" promptText="Saisir le titre" />
-                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="338.0" layoutY="23.0" prefHeight="25.0" prefWidth="52.0" text="Titre">
+                  <Label alignment="CENTER_LEFT" contentDisplay="CENTER" layoutX="22.0" layoutY="180.0" prefHeight="25.0" prefWidth="180.0" text="Localisation:">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <Label alignment="CENTER_LEFT" contentDisplay="CENTER" layoutX="22.0" layoutY="222.0" prefHeight="25.0" prefWidth="200.0" text="Certificat d'authenticité:">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <Label alignment="CENTER_LEFT" contentDisplay="CENTER" layoutX="250.0" layoutY="222.0" prefHeight="25.0" prefWidth="100.0" text="Stockage:">
                      <font>
                         <Font size="16.0" />
                      </font>
                   </Label>
                </children>
             </AnchorPane>
-            <AnchorPane layoutX="655.0" layoutY="395.0" prefHeight="258.0" prefWidth="611.0" style="-fx-border-color: Black;">
+            <AnchorPane layoutX="655.0" layoutY="395.0" prefHeight="260.0" maxHeight="260" prefWidth="611.0" style="-fx-border-color: Black;">
                <children>
-                  <TextField layoutX="129.0" layoutY="19.0" promptText="Saisissez la taille" />
-                  <TextField layoutX="129.0" layoutY="62.0" promptText="Saisissez la taille" />
-                  <TextField layoutX="158.0" layoutY="109.0" prefHeight="25.0" prefWidth="177.0" promptText="Saisissez la valeur d'assurance" />
-                  <TextField layoutX="101.0" layoutY="161.0" promptText="Saisissez le matériel" />
-                  <TextField layoutX="108.0" layoutY="214.0" prefHeight="25.0" prefWidth="136.0" promptText="Saisissez la technique" />
-                  <ComboBox layoutX="368.0" layoutY="75.0" prefWidth="150.0" promptText="Type d'oeuvre" />
-                  <ComboBox layoutX="368.0" layoutY="173.0" prefWidth="150.0" promptText="Etat de l'oeuvre" />
-                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="22.0" layoutY="19.0" prefHeight="25.0" prefWidth="88.0" text="Taille (H x L)">
+                  <TextField fx:id="heigthField" layoutX="160.0" layoutY="12.0" prefWidth="180.0" promptText="Saisissez la hauteur" />
+                  <TextField fx:id="widthField" layoutX="350" layoutY="12.0" prefWidth="180.0" promptText="Saisissez la largeur" />
+                  <TextField fx:id="perimeterField" layoutX="160.0" layoutY="54.0" prefWidth="180.0" promptText="Saisissez le périmètre" />
+                  <TextField fx:id="insuranceField" layoutX="160.0" layoutY="96.0" prefHeight="25.0" prefWidth="180.0" promptText="Saisissez la valeur d'assurance" />
+                  <TextField fx:id="materialField" layoutX="160.0" layoutY="138.0" prefWidth="180.0" promptText="Saisissez le matériel" />
+                  <TextField fx:id="technicField" layoutX="160.0" layoutY="180.0" prefHeight="25.0" prefWidth="180.0" promptText="Saisissez la technique" />
+                  <TextField fx:id="typeField" layoutX="160.0" layoutY="222.0" prefWidth="180.0" promptText="Type de l'oeuvre" />
+                  <ComboBox fx:id="restoredBox" layoutX="350.0" layoutY="54.0" prefWidth="180.0" promptText="Etat de l'oeuvre" />
+                  <Label alignment="CENTER_LEFT" contentDisplay="CENTER" layoutX="22.0" layoutY="12.0" prefHeight="25.0" prefWidth="180.0" text="Taille (H x L)">
                      <font>
                         <Font size="16.0" />
                      </font>
                   </Label>
-                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="22.0" layoutY="62.0" prefHeight="25.0" prefWidth="79.0" text="Périmètre">
+                  <Label alignment="CENTER_LEFT" contentDisplay="CENTER" layoutX="22.0" layoutY="54.0" prefHeight="25.0" prefWidth="180.0" text="Périmètre">
                      <font>
                         <Font size="16.0" />
                      </font>
                   </Label>
-                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="22.0" layoutY="109.0" prefHeight="25.0" prefWidth="127.0" text="Valeur assurance">
+                  <Label alignment="CENTER_LEFT" contentDisplay="CENTER" layoutX="22.0" layoutY="96.0" prefHeight="25.0" prefWidth="180.0" text="N° assurance">
                      <font>
                         <Font size="16.0" />
                      </font>
                   </Label>
-                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="22.0" layoutY="160.0" prefHeight="25.0" prefWidth="67.0" text="Matèriel">
+                  <Label alignment="CENTER_LEFT" contentDisplay="CENTER" layoutX="22.0" layoutY="138.0" prefHeight="25.0" prefWidth="180.0" text="Materiel">
                      <font>
                         <Font size="16.0" />
                      </font>
                   </Label>
-                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="22.0" layoutY="214.0" prefHeight="25.0" prefWidth="79.0" text="Technique">
+                  <Label alignment="CENTER_LEFT" contentDisplay="CENTER" layoutX="22.0" layoutY="180.0" prefHeight="25.0" prefWidth="180.0" text="Technique">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <Label alignment="CENTER_LEFT" contentDisplay="CENTER" layoutX="22.0" layoutY="222.0" prefHeight="25.0" prefWidth="180.0" text="Type d'oeuvre">
                      <font>
                         <Font size="16.0" />
                      </font>
@@ -110,7 +125,7 @@
                </font>
             </Label>
             <Button layoutX="577.0" layoutY="669.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="127.0" onAction="#addArtwork" text="Ajouter" />
-            <TextArea layoutX="751.0" layoutY="153.0" prefHeight="155.0" prefWidth="419.0" />
+            <TextArea fx:id="descField" layoutX="751.0" layoutY="153.0" prefHeight="155.0" prefWidth="419.0" />
             <Label layoutX="875.0" layoutY="114.0" text="Texte descriptif :" underline="true">
                <font>
                   <Font size="21.0" />

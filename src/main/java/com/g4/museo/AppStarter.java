@@ -9,7 +9,6 @@ public class AppStarter implements Runnable{
     }
 
     public static void stop() {
-        System.out.println("shutdown");
         Thread.currentThread().interrupt();
     }
 
