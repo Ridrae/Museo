@@ -16,6 +16,10 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -288,6 +292,29 @@ public class MainFxmlController extends FXMLController implements Initializable 
             }
             artworkStage.setScene(artworkScene);
             artworkStage.show();
+        } catch (IOException e) {
+            ErrorWindowFactory.create(e);
+        }
+    }
+
+    @FXML
+    public void onDisplayArtworkCalled(MouseEvent event){
+        Stage displayartworkStage = new Stage();
+        displayartworkStage.setTitle("Museo Diplay Artwork");
+        displayartworkStage.setResizable(false);
+        DisplayArtworkFxmlController displayartworkController = applicationContext.getBean(DisplayArtworkFxmlController.class);
+        Scene displayartworkScene = null;
+        System.out.println(event.getSource());
+        try {
+            if(displayartworkController.getView().getScene() == null){
+                displayartworkScene = new Scene(displayartworkController.getView());
+            } else if(displayartworkController.getView().getScene().getWindow().isShowing()) {
+                return;
+            } else {
+                displayartworkScene = displayartworkController.getView().getScene();
+            }
+            displayartworkStage.setScene(displayartworkScene);
+            displayartworkStage.show();
         } catch (IOException e) {
             ErrorWindowFactory.create(e);
         }

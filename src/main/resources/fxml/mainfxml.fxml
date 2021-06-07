@@ -63,7 +63,7 @@
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="573.0" prefWidth="1277.0">
                <children>
-                  <TableView id="artworkGrid" fx:id="artworkGrid" prefHeight="575.0" prefWidth="1280.0">
+                  <TableView id="artworkGrid" fx:id="artworkGrid" onMouseClicked="#onDisplayArtworkCalled" prefHeight="575.0" prefWidth="1280.0">
                      <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                      </columnResizePolicy>
