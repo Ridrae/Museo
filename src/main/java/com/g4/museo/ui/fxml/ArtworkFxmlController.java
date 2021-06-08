@@ -1,5 +1,6 @@
 package com.g4.museo.ui.fxml;
 
+import com.g4.museo.event.UserChangedEvent;
 import com.g4.museo.persistence.dto.*;
 import com.g4.museo.persistence.r2dbc.*;
 import com.g4.museo.ui.utils.AlertWindowFactory;
@@ -9,16 +10,18 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import net.bytebuddy.asm.Advice;
 import org.aspectj.util.FileUtil;
 import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -28,7 +31,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -57,10 +59,10 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
     ArtworkDetailsR2dbcDao artworkDetailsR2dbcDao;
 
     @FXML
-    ComboBox ownerBox;
+    ComboBox<String>  ownerBox;
 
     @FXML
-    ComboBox collectionBox;
+    ComboBox<String> collectionBox;
 
     @FXML
     TextField nameField;
@@ -84,13 +86,13 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
     ImageView pictureView;
 
     @FXML
-    ComboBox stateBox;
+    ComboBox<String> stateBox;
 
     @FXML
     TextArea descField;
 
     @FXML
-    ComboBox restoredBox;
+    ComboBox<String> restoredBox;
 
     @FXML
     TextField heigthField;
@@ -119,36 +121,58 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
     @FXML
     CheckBox storedBox;
 
+    @FXML
+    Label descLabel;
+
+     @FXML
+    AnchorPane detailPane;
+
+     @FXML
+     Label detailLabel;
+
+    List<Node> toUpdate;
+
     private File imageFile;
 
     @FXML
     public void onReturn(ActionEvent event){
-        Scene scene = (Scene) ((Node) event.getSource()).getScene();
-        Stage stage = (Stage)scene.getWindow();
+        var scene = ((Node) event.getSource()).getScene();
+        var stage = (Stage)scene.getWindow();
         stage.close();
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources){
+        toUpdate = Arrays.asList(detailPane, detailLabel, descField, descLabel);
         initComboBox();
+        initPermissions();
         descField.setWrapText(true);
+    }
+
+    @EventListener(UserChangedEvent.class)
+    private void initPermissions(){
+        if (descField!=null) {
+            if(SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))){
+                toUpdate.forEach(c -> c.setVisible(true));
+            } else {
+                toUpdate.forEach(c -> c.setVisible(false));
+            }
+        }
     }
 
     private void initComboBox(){
         Flux<Owner> flux = ownerR2dbcDao.findAllOwners();
         List<Owner> ownersList = new ArrayList<>();
-        flux.doOnComplete(() -> {
-            ownersList.forEach(owner -> {
-                if(owner.getFirstname() != null && owner.getLastname() != null){
-                    StringBuilder fullname = new StringBuilder(owner.getFirstname());
-                    fullname.append(" ");
-                    fullname.append(owner.getLastname());
-                    ownerBox.getItems().add(fullname.toString());
-                } else if(owner.getOrga() != null) {
-                    ownerBox.getItems().add(owner.getOrga());
-                }
-            });
-        }).subscribe(ownersList::add);
+        flux.doOnComplete(() -> ownersList.forEach(owner -> {
+            if(owner.getFirstname() != null && owner.getLastname() != null){
+                var fullname = new StringBuilder(owner.getFirstname());
+                fullname.append(" ");
+                fullname.append(owner.getLastname());
+                ownerBox.getItems().add(fullname.toString());
+            } else if(owner.getOrga() != null) {
+                ownerBox.getItems().add(owner.getOrga());
+            }
+        })).subscribe(ownersList::add);
         Flux<Collection> fluxCollection = collectionR2dbcDao.findAllCollections();
         List<Collection> collectionList = new ArrayList<>();
         fluxCollection.doOnComplete(() -> {
@@ -161,12 +185,10 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
 
         Flux<ArtworkState> fluxState = stateR2dbcDao.getAllStates();
         List<ArtworkState> stateList = new ArrayList<>();
-        fluxState.doOnComplete(() -> {
-            stateBox.getItems().addAll(stateList
-                    .stream()
-                    .map(ArtworkState::getStateName)
-                    .collect(Collectors.toList()));
-        }).subscribe(stateList::add);
+        fluxState.doOnComplete(() -> stateBox.getItems().addAll(stateList
+                .stream()
+                .map(ArtworkState::getStateName)
+                .collect(Collectors.toList()))).subscribe(stateList::add);
 
         restoredBox.getItems().addAll(Arrays.asList("Neuf", "Restauré"));
     }
@@ -177,7 +199,7 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
         Stage stage = null;
         try {
             stage = (Stage) this.getView().getScene().getWindow();
-            FileChooser fileChooser = new FileChooser();
+            var fileChooser = new FileChooser();
             fileChooser.setTitle("Select an image");
             fileChooser.getExtensionFilters().addAll(
                     new FileChooser.ExtensionFilter("All Images", "*.*"),
@@ -196,9 +218,10 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
         }
     }
 
+    @SuppressWarnings("java:S3776")
     @FXML
     public void addArtwork(){
-        ArtworkFullDTO artworkFullDTO = ArtworkFullDTO.builder()
+        var artworkFullDTO = ArtworkFullDTO.builder()
                 .artwork(Artwork.builder().build())
                 .artworkBorrow(ArtworkBorrow.builder().build())
                 .artworkDetails(ArtworkDetails.builder().build())
@@ -217,7 +240,7 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
         }
         if (imageFile != null){
             try {
-                ByteBuffer bytes = ByteBuffer.wrap(FileUtil.readAsByteArray(imageFile));
+                var bytes = ByteBuffer.wrap(FileUtil.readAsByteArray(imageFile));
                 Publisher<ByteBuffer> flux = Flux.just(bytes);
                 artworkFullDTO.getArtwork().setPicture(Blob.from(flux));
             } catch (IOException e) {
@@ -235,28 +258,24 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
         }
         artworkFullDTO.getArtwork().setCertified(certificateBox.isSelected());
         if(stateBox.getValue()!=null){
-            artworkFullDTO.getArtwork().setStateID(stateR2dbcDao.findStateIdByName(stateBox.getValue().toString()).block());
+            artworkFullDTO.getArtwork().setStateID(stateR2dbcDao.findStateIdByName(stateBox.getValue()).block());
         } else {
             AlertWindowFactory.create("Missing infos", "Please select a status");
             return;
         }
-        if(stateField.getText().equals("") && stateBox.getValue().toString().equals("museum")){
+        if(stateField.getText().equals("") && stateBox.getValue().equals("museum")){
             AlertWindowFactory.create("Missing infos", "Please select a location");
             return;
         } else {
             artworkFullDTO.getArtwork().setStoredLocation(stateField.getText());
         }
         if(collectionBox.getValue()!=null){
-            artworkFullDTO.getArtwork().setCollectionID(collectionR2dbcDao.findCollectionIdByName(collectionBox.getValue().toString()).block());
+            artworkFullDTO.getArtwork().setCollectionID(collectionR2dbcDao.findCollectionIdByName(collectionBox.getValue()).block());
         }
         if(ownerBox.getValue() == null){
             AlertWindowFactory.create("Missing infos", "Please select an owner");
             return;
-        } else if(ownerBox.getValue().toString().equals("Museo")) {
-            artworkFullDTO.getArtwork().setBorrowed(false);
-        } else {
-            artworkFullDTO.getArtwork().setBorrowed(true);
-        }
+        } else artworkFullDTO.getArtwork().setBorrowed(!ownerBox.getValue().equals("Museo"));
         if(descField.getText().equals("")){
             AlertWindowFactory.create("Missing infos", "Please write a description");
             return;
@@ -295,19 +314,15 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
         if(restoredBox.getValue() == null){
             AlertWindowFactory.create("Missing infos", "Please select a status");
             return;
-        } else if(restoredBox.getValue().toString().equals("Neuf")){
-            artworkFullDTO.getArtworkDetails().setRestored(false);
-        } else {
-            artworkFullDTO.getArtworkDetails().setRestored(true);
-        }
+        } else artworkFullDTO.getArtworkDetails().setRestored(!restoredBox.getValue().equals("Neuf"));
 
         if(artworkFullDTO.getArtwork().isBorrowed()) {
             if (ownerBox.getValue() == null) {
                 AlertWindowFactory.create("Missing infos", "Please select an owner");
                 return;
             } else {
-                String firstname = ownerBox.getValue().toString().split(" ")[0];
-                String lastname = ownerBox.getValue().toString().split(" ")[1];
+                String firstname = ownerBox.getValue().split(" ")[0];
+                String lastname = ownerBox.getValue().split(" ")[1];
                 artworkFullDTO.getArtworkBorrow().setIdowner(ownerR2dbcDao.findOwnerIdByName(firstname, lastname).block());
             }
             if(borrowField.getValue() == null) {

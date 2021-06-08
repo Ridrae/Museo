@@ -19,6 +19,6 @@ public interface ArtworkFullR2dbcDao extends R2dbcRepository<ArtworkFullDTO, Int
             "JOIN artwork_state AS s ON a.state_id = s.idstate " +
             "JOIN artwork_borrow AS b ON a.idartwork = b.idartwork " +
             "JOIN owner AS o ON b.idowner = o.idowner " +
-            "JOIN artwork_details AS d ON a.idartwork = d.idartwork")
+            "LEFT JOIN artwork_details AS d ON a.idartwork = d.idartwork")
     Flux<ArtworkFullDTO> findAllArtworks();
 }

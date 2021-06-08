@@ -16,7 +16,7 @@ public class FXMLController {
     private Parent root;
 
     public Parent load() throws IOException {
-        FXMLLoader loader = new FXMLLoader();
+        var loader = new FXMLLoader();
         String name = getFxmlName();
         loader.setLocation(getClass().getClassLoader().getResource(name));
         loader.setControllerFactory(clz -> this);
@@ -25,7 +25,7 @@ public class FXMLController {
 
     private String getFxmlName(){
         String name = this.getClass().getSimpleName();
-        name = name.replaceAll("\\.", "/");
+        name = name.replace(".", "/");
         if(name.endsWith(prefix)){
             name = name.substring(0, name.lastIndexOf(prefix));
         }

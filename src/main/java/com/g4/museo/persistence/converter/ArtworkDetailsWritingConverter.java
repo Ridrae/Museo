@@ -10,7 +10,7 @@ import org.springframework.r2dbc.core.Parameter;
 public class ArtworkDetailsWritingConverter implements Converter<ArtworkDetails, OutboundRow> {
     @Override
     public OutboundRow convert(ArtworkDetails artworkDetails) {
-        OutboundRow row = new OutboundRow();
+        var row = new OutboundRow();
         if(artworkDetails.getIddetails() != null) {
             row.put("iddetails", Parameter.from(artworkDetails.getIddetails()));
         }

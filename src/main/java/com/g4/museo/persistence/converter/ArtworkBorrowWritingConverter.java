@@ -10,7 +10,7 @@ import org.springframework.r2dbc.core.Parameter;
 public class ArtworkBorrowWritingConverter implements Converter<ArtworkBorrow, OutboundRow> {
     @Override
     public OutboundRow convert(ArtworkBorrow artworkBorrow) {
-        OutboundRow row = new OutboundRow();
+        var row = new OutboundRow();
         if(artworkBorrow.getIdborrow() != null) {
             row.put("idborrow", Parameter.from(artworkBorrow.getIdborrow()));
         }

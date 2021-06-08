@@ -2,29 +2,26 @@ package com.g4.museo.persistence.converter;
 
 import com.g4.museo.persistence.dto.Artwork;
 import com.g4.museo.ui.utils.ErrorWindowFactory;
-import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.WritingConverter;
 import org.springframework.data.r2dbc.mapping.OutboundRow;
 import org.springframework.r2dbc.core.Parameter;
-import reactor.core.publisher.Flux;
 
 import java.nio.ByteBuffer;
-import java.util.concurrent.Flow;
 
 @WritingConverter
 public class ArtworkWritingConverter implements Converter<Artwork, OutboundRow> {
     @Override
     public OutboundRow convert(Artwork artwork) {
-        OutboundRow row = new OutboundRow();
+        var row = new OutboundRow();
         if(artwork.getIdartwork() != null) {
             row.put("idartwork", Parameter.from(artwork.getIdartwork()));
         }
         row.put("name", Parameter.from(artwork.getName()));
         row.put("author", Parameter.from(artwork.getAuthor()));
-        final ByteBuffer[] picture = new ByteBuffer[1];
+        final var picture = new ByteBuffer[1];
         Subscriber<ByteBuffer> bytes = new Subscriber<ByteBuffer>() {
             @Override
             public void onSubscribe(Subscription subscription) {
@@ -58,7 +55,9 @@ public class ArtworkWritingConverter implements Converter<Artwork, OutboundRow> 
         }
         row.put("state_id", Parameter.from(artwork.getStateID()));
         row.put("borrowed", Parameter.from(artwork.isBorrowed()));
-        row.put("description", Parameter.from(artwork.getDesc()));
+        if(artwork.getDesc()!=null){
+            row.put("description", Parameter.from(artwork.getDesc()));
+        }
         return row;
     }
 }

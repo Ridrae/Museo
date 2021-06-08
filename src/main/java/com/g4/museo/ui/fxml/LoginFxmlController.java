@@ -6,7 +6,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
@@ -17,7 +16,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -44,8 +42,8 @@ public class LoginFxmlController extends FXMLController implements Initializable
 
     @FXML
     public void onReturn(ActionEvent event){
-        Scene scene = (Scene) ((Node) event.getSource()).getScene();
-        Stage stage = (Stage)scene.getWindow();
+        var scene = ((Node) event.getSource()).getScene();
+        var stage = (Stage)scene.getWindow();
         stage.close();
     }
 
@@ -58,13 +56,13 @@ public class LoginFxmlController extends FXMLController implements Initializable
             Authentication result = authManager.authenticate(request);
             SecurityContextHolder.getContext().setAuthentication(result);
             applicationEventPublisher.publishEvent(new UserChangedEvent(this));
-            Alert alertSuccessfulLogin = new Alert(Alert.AlertType.INFORMATION);
+            var alertSuccessfulLogin = new Alert(Alert.AlertType.INFORMATION);
             alertSuccessfulLogin.setHeaderText("Successful Login");
             alertSuccessfulLogin.setContentText("Successfully logged in as " + SecurityContextHolder.getContext().getAuthentication().getName());
             alertSuccessfulLogin.showAndWait();
             ((Stage)this.getView().getScene().getWindow()).close();
         } catch (AuthenticationException | IOException e) {
-            Alert alertWrongCredentials = new Alert(Alert.AlertType.INFORMATION);
+            var alertWrongCredentials = new Alert(Alert.AlertType.INFORMATION);
             alertWrongCredentials.setHeaderText("Login Error");
             alertWrongCredentials.setContentText(e.getMessage());
             alertWrongCredentials.showAndWait();

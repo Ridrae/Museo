@@ -4,7 +4,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.springframework.stereotype.Component;
 
@@ -16,12 +15,13 @@ public class DisplayArtworkFxmlController extends FXMLController implements Init
 
     @FXML
     public void onReturn(ActionEvent event){
-        Scene scene = (Scene) ((Node) event.getSource()).getScene();
-        Stage stage = (Stage)scene.getWindow();
+        var scene = ((Node) event.getSource()).getScene();
+        var stage = (Stage)scene.getWindow();
         stage.close();
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources){
+        //TODO complete display artwork
     }
 }

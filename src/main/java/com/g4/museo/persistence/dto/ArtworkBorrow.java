@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
-
-import java.sql.Timestamp;
 import java.time.LocalDate;
 
 @Builder

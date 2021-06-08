@@ -9,11 +9,12 @@ import org.springframework.data.convert.ReadingConverter;
 
 import java.time.LocalDate;
 
+@SuppressWarnings("java:S1192")
 @ReadingConverter
 public class ArtworkFullReadingConverter implements Converter<Row, ArtworkFullDTO> {
     @Override
     public ArtworkFullDTO convert(Row source){
-        Artwork artwork = Artwork.builder()
+        var artwork = Artwork.builder()
                 .idartwork(source.get("idartwork", Integer.class))
                 .name(source.get("name", String.class))
                 .author(source.get("author", String.class))
@@ -27,7 +28,7 @@ public class ArtworkFullReadingConverter implements Converter<Row, ArtworkFullDT
                 .desc(source.get("description", String.class))
                 .build();
 
-        ArtworkBorrow artworkBorrow = ArtworkBorrow.builder()
+        var artworkBorrow = ArtworkBorrow.builder()
                 .idartwork(source.get("idartwork", Integer.class))
                 .idowner(source.get("idowner", Integer.class))
                 .dateBorrowed(source.get("date_borrowed", LocalDate.class))
@@ -36,17 +37,22 @@ public class ArtworkFullReadingConverter implements Converter<Row, ArtworkFullDT
                 .longTerm(BooleanUtils.toBoolean(source.get("is_long_term", Byte.class)))
                 .build();
 
-        ArtworkDetails artworkDetails = ArtworkDetails.builder()
-                .idartwork(source.get("idartwork", Integer.class))
-                .width(source.get("width", String.class))
-                .height(source.get("height", String.class))
-                .perimeter(source.get("perimeter", String.class))
-                .insuranceNumber(source.get("insurance_number", String.class))
-                .material(source.get("material", String.class))
-                .technic(source.get("technic", String.class))
-                .type(source.get("type", String.class))
-                .restored(BooleanUtils.toBoolean(source.get("is_restored", Byte.class)))
-                .build();
+        ArtworkDetails artworkDetails;
+        try{
+            artworkDetails = ArtworkDetails.builder()
+                    .idartwork(source.get("idartwork", Integer.class))
+                    .width(source.get("width", String.class))
+                    .height(source.get("height", String.class))
+                    .perimeter(source.get("perimeter", String.class))
+                    .insuranceNumber(source.get("insurance_number", String.class))
+                    .material(source.get("material", String.class))
+                    .technic(source.get("technic", String.class))
+                    .type(source.get("type", String.class))
+                    .restored(BooleanUtils.toBoolean(source.get("is_restored", Byte.class)))
+                    .build();
+        } catch (NullPointerException e){
+            artworkDetails = ArtworkDetails.builder().build();
+        }
 
         Collection collection;
         try{
@@ -61,7 +67,7 @@ public class ArtworkFullReadingConverter implements Converter<Row, ArtworkFullDT
                     .build();
         }
 
-        Owner owner = Owner.builder()
+        var owner = Owner.builder()
                 .ownerID(source.get("idowner", Integer.class))
                 .firstname(source.get("owner_firstname", String.class))
                 .lastname(source.get("owner_lastname", String.class))
@@ -69,7 +75,7 @@ public class ArtworkFullReadingConverter implements Converter<Row, ArtworkFullDT
                 .adress(source.get("owner_adress", String.class))
                 .build();
 
-        ArtworkState artworkState = ArtworkState.builder()
+        var artworkState = ArtworkState.builder()
                 .stateID(source.get("state_id", Integer.class))
                 .stateName(source.get("state_name", String.class))
                 .build();
