@@ -23,7 +23,7 @@
                </font>
             </Label>
             <Button layoutX="32.0" layoutY="37.0" mnemonicParsing="false" onAction="#onReturn" text="Retour" />
-            <AnchorPane layoutX="14.0" layoutY="395.0" prefHeight="260.0" maxHeight="260" prefWidth="611.0" style="-fx-border-color: Black;">
+            <AnchorPane layoutX="14.0" layoutY="395.0" maxHeight="260" prefHeight="260.0" prefWidth="611.0" style="-fx-border-color: Black;">
                <children>
                   <TextField fx:id="authorField" layoutX="220.0" layoutY="12.0" prefHeight="25.0" prefWidth="180.0" promptText="Artiste" />
                   <TextField fx:id="nameField" layoutX="220.0" layoutY="54.0" prefHeight="25.0" prefWidth="180.0" promptText="Titre" />
@@ -31,8 +31,8 @@
                   <DatePicker fx:id="borrowField" layoutX="220.0" layoutY="138.0" prefHeight="25.0" prefWidth="180.0" promptText="Date de prêt" />
                   <DatePicker fx:id="returnField" layoutX="410.0" layoutY="138.0" prefHeight="25.0" prefWidth="180.0" promptText="Date de rendu" />
                   <TextField fx:id="stateField" layoutX="220.0" layoutY="180.0" prefWidth="180.0" promptText="Localisation" />
-                  <CheckBox fx:id="certificateBox" layoutX="220.0" layoutY="222.0" mnemonicParsing="false" prefHeight="25.0"/>
-                  <CheckBox fx:id="storedBox" layoutX="360.0" layoutY="222.0" mnemonicParsing="false" prefHeight="25.0"/>
+                  <CheckBox fx:id="certificateBox" layoutX="220.0" layoutY="222.0" mnemonicParsing="false" prefHeight="25.0" />
+                  <CheckBox fx:id="storedBox" layoutX="360.0" layoutY="222.0" mnemonicParsing="false" prefHeight="25.0" />
                   <ComboBox fx:id="ownerBox" layoutX="410.0" layoutY="12.0" prefWidth="180.0" promptText="Propriétaire" />
                   <ComboBox fx:id="collectionBox" layoutX="410.0" layoutY="54.0" prefWidth="180.0" promptText="Collection" />
                   <ComboBox fx:id="stateBox" layoutX="410.0" layoutY="96.0" prefWidth="180.0" promptText="Statut" />
@@ -73,7 +73,7 @@
                   </Label>
                </children>
             </AnchorPane>
-            <AnchorPane fx:id="detailPane" layoutX="655.0" layoutY="395.0" prefHeight="260.0" maxHeight="260" prefWidth="611.0" style="-fx-border-color: Black;">
+            <AnchorPane fx:id="detailPane" layoutX="655.0" layoutY="395.0" maxHeight="260" prefHeight="260.0" prefWidth="611.0" style="-fx-border-color: Black;">
                <children>
                   <TextField fx:id="heigthField" layoutX="160.0" layoutY="12.0" prefWidth="180.0" promptText="Saisissez la hauteur" />
                   <TextField fx:id="widthField" layoutX="350" layoutY="12.0" prefWidth="180.0" promptText="Saisissez la largeur" />
@@ -124,8 +124,8 @@
                   <Font size="21.0" />
                </font>
             </Label>
-            <Button layoutX="577.0" layoutY="669.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="127.0" onAction="#addArtwork" text="Ajouter" />
-            <TextArea fx:id="descField" layoutX="751.0" layoutY="153.0" prefHeight="155.0" prefWidth="419.0" />
+            <Button layoutX="577.0" layoutY="669.0" mnemonicParsing="false" onAction="#addArtwork" prefHeight="37.0" prefWidth="127.0" text="Ajouter" />
+            <TextArea fx:id="descField" layoutX="751.0" layoutY="153.0" prefHeight="155.0" prefWidth="419.0" style="-fx-background-color: black;" />
             <Label fx:id="descLabel" layoutX="875.0" layoutY="114.0" text="Texte descriptif :" underline="true">
                <font>
                   <Font size="21.0" />
