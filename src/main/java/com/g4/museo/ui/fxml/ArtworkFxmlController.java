@@ -1,6 +1,6 @@
 package com.g4.museo.ui.fxml;
 
-import com.g4.museo.event.UserChangedEvent;
+import com.g4.museo.event.UserLoginEvent;
 import com.g4.museo.persistence.dto.*;
 import com.g4.museo.persistence.r2dbc.*;
 import com.g4.museo.ui.utils.AlertWindowFactory;
@@ -16,7 +16,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.aspectj.util.FileUtil;
 import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -31,6 +30,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -50,13 +50,7 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
     StateR2dbcDao stateR2dbcDao;
 
     @Autowired
-    ArtworkR2dbcDao artworkR2dbcDao;
-
-    @Autowired
-    ArtworkBorrowR2dbcDao artworkBorrowR2dbcDao;
-
-    @Autowired
-    ArtworkDetailsR2dbcDao artworkDetailsR2dbcDao;
+    ArtworkFullR2dbcDao artworkFullR2dbcDao;
 
     @FXML
     ComboBox<String>  ownerBox;
@@ -149,7 +143,7 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
         descField.setWrapText(true);
     }
 
-    @EventListener(UserChangedEvent.class)
+    @EventListener(UserLoginEvent.class)
     private void initPermissions(){
         if (descField!=null) {
             if(SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))){
@@ -173,7 +167,7 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
                 ownerBox.getItems().add(owner.getOrga());
             }
         })).subscribe(ownersList::add);
-        Flux<Collection> fluxCollection = collectionR2dbcDao.findAllCollections();
+        Flux<Collection> fluxCollection = collectionR2dbcDao.findAll();
         List<Collection> collectionList = new ArrayList<>();
         fluxCollection.doOnComplete(() -> {
             collectionBox.getItems().addAll(collectionList
@@ -221,28 +215,24 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
     @SuppressWarnings("java:S3776")
     @FXML
     public void addArtwork(){
-        var artworkFullDTO = ArtworkFullDTO.builder()
-                .artwork(Artwork.builder().build())
-                .artworkBorrow(ArtworkBorrow.builder().build())
-                .artworkDetails(ArtworkDetails.builder().build())
-                .build();
+        var artworkFullDTO = ArtworkFull.builder().build();
         if(nameField.getText().equals("")){
             AlertWindowFactory.create("Missing infos", "Please select a name");
             return;
         } else {
-            artworkFullDTO.getArtwork().setName(nameField.getText());
+            artworkFullDTO.setName(nameField.getText());
         }
         if(authorField.getText().equals("")){
             AlertWindowFactory.create("Missing infos", "Please select an author");
             return;
         } else {
-            artworkFullDTO.getArtwork().setAuthor(authorField.getText());
+            artworkFullDTO.setAuthor(authorField.getText());
         }
         if (imageFile != null){
             try {
-                var bytes = ByteBuffer.wrap(FileUtil.readAsByteArray(imageFile));
+                var bytes = ByteBuffer.wrap(Files.readAllBytes(imageFile.toPath()));
                 Publisher<ByteBuffer> flux = Flux.just(bytes);
-                artworkFullDTO.getArtwork().setPicture(Blob.from(flux));
+                artworkFullDTO.setPicture(Blob.from(flux));
             } catch (IOException e) {
                 ErrorWindowFactory.create(e);
             }
@@ -251,14 +241,14 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
             return;
         }
         if(dateField.getValue()!=null){
-            artworkFullDTO.getArtwork().setDate(dateField.getValue());
+            artworkFullDTO.setDate(dateField.getValue());
         } else {
             AlertWindowFactory.create("Missing infos", "Please select a creation date");
             return;
         }
-        artworkFullDTO.getArtwork().setCertified(certificateBox.isSelected());
+        artworkFullDTO.setCertified(certificateBox.isSelected());
         if(stateBox.getValue()!=null){
-            artworkFullDTO.getArtwork().setStateID(stateR2dbcDao.findStateIdByName(stateBox.getValue()).block());
+            artworkFullDTO.setStateID(stateR2dbcDao.findStateIdByName(stateBox.getValue()).block());
         } else {
             AlertWindowFactory.create("Missing infos", "Please select a status");
             return;
@@ -267,88 +257,83 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
             AlertWindowFactory.create("Missing infos", "Please select a location");
             return;
         } else {
-            artworkFullDTO.getArtwork().setStoredLocation(stateField.getText());
+            artworkFullDTO.setStoredLocation(stateField.getText());
         }
         if(collectionBox.getValue()!=null){
-            artworkFullDTO.getArtwork().setCollectionID(collectionR2dbcDao.findCollectionIdByName(collectionBox.getValue()).block());
+            artworkFullDTO.setCollectionID(collectionR2dbcDao.findCollectionIdByName(collectionBox.getValue()).block());
         }
         if(ownerBox.getValue() == null){
             AlertWindowFactory.create("Missing infos", "Please select an owner");
             return;
-        } else artworkFullDTO.getArtwork().setBorrowed(!ownerBox.getValue().equals("Museo"));
+        } else artworkFullDTO.setBorrowed(!ownerBox.getValue().equals("Museo"));
         if(descField.getText().equals("")){
             AlertWindowFactory.create("Missing infos", "Please write a description");
             return;
         } else {
-            artworkFullDTO.getArtwork().setDesc(descField.getText());
+            artworkFullDTO.setDesc(descField.getText());
         }
         if (widthField.getText().equals("")){
             AlertWindowFactory.create("Missing infos", "Please specify a width");
             return;
         }else{
-            artworkFullDTO.getArtworkDetails().setWidth(widthField.getText());
+            artworkFullDTO.setWidth(widthField.getText());
         }
         if(heigthField.getText().equals("")){
             AlertWindowFactory.create("Missing infos", "Please specify a heigth");
             return;
         }else{
-            artworkFullDTO.getArtworkDetails().setHeight(heigthField.getText());
+            artworkFullDTO.setHeight(heigthField.getText());
         }
         if(perimeterField.getText().equals("")){
             AlertWindowFactory.create("Missing infos", "Please specify a perimter");
             return;
         }else{
-            artworkFullDTO.getArtworkDetails().setPerimeter(perimeterField.getText());
+            artworkFullDTO.setPerimeter(perimeterField.getText());
         }
 
-        artworkFullDTO.getArtworkDetails().setInsuranceNumber(insuranceField.getText());
-        artworkFullDTO.getArtworkDetails().setMaterial(materialField.getText());
-        artworkFullDTO.getArtworkDetails().setTechnic(technicField.getText());
+        artworkFullDTO.setInsuranceNumber(insuranceField.getText());
+        artworkFullDTO.setMaterial(materialField.getText());
+        artworkFullDTO.setTechnic(technicField.getText());
 
         if(typeField.getText().equals("")){
             AlertWindowFactory.create("Missing infos", "Please specify a type");
             return;
         } else {
-            artworkFullDTO.getArtworkDetails().setType(typeField.getText());
+            artworkFullDTO.setType(typeField.getText());
         }
         if(restoredBox.getValue() == null){
             AlertWindowFactory.create("Missing infos", "Please select a status");
             return;
-        } else artworkFullDTO.getArtworkDetails().setRestored(!restoredBox.getValue().equals("Neuf"));
+        } else artworkFullDTO.setRestored(!restoredBox.getValue().equals("Neuf"));
 
-        if(artworkFullDTO.getArtwork().isBorrowed()) {
+        if(artworkFullDTO.isBorrowed()) {
             if (ownerBox.getValue() == null) {
                 AlertWindowFactory.create("Missing infos", "Please select an owner");
                 return;
             } else {
                 String firstname = ownerBox.getValue().split(" ")[0];
                 String lastname = ownerBox.getValue().split(" ")[1];
-                artworkFullDTO.getArtworkBorrow().setIdowner(ownerR2dbcDao.findOwnerIdByName(firstname, lastname).block());
+                artworkFullDTO.setIdowner(ownerR2dbcDao.findOwnerIdByName(firstname, lastname).block());
             }
             if(borrowField.getValue() == null) {
                 AlertWindowFactory.create("Missing infos", "Please enter a borrow date");
                 return;
             } else {
-                artworkFullDTO.getArtworkBorrow().setDateBorrowed(borrowField.getValue());
+                artworkFullDTO.setDateBorrowed(borrowField.getValue());
             }
             if(returnField.getValue() == null){
-                artworkFullDTO.getArtworkBorrow().setLongTerm(true);
+                artworkFullDTO.setLongTerm(true);
             } else {
-                artworkFullDTO.getArtworkBorrow().setReturnDate(returnField.getValue());
-                artworkFullDTO.getArtworkBorrow().setLongTerm(false);
+                artworkFullDTO.setReturnDate(returnField.getValue());
+                artworkFullDTO.setLongTerm(false);
             }
-            artworkFullDTO.getArtworkBorrow().setStored(storedBox.isSelected());
+            artworkFullDTO.setStored(storedBox.isSelected());
         } else {
-            artworkFullDTO.getArtworkBorrow().setIdowner(ownerR2dbcDao.findOwnerIdByOrga("Museo").block());
-            artworkFullDTO.getArtworkBorrow().setLongTerm(false);
-            artworkFullDTO.getArtworkBorrow().setStored(false);
+            artworkFullDTO.setIdowner(ownerR2dbcDao.findOwnerIdByOrga("Museo").block());
+            artworkFullDTO.setLongTerm(false);
+            artworkFullDTO.setStored(false);
         }
 
-        Mono<Artwork> artwork = artworkR2dbcDao.save(artworkFullDTO.getArtwork());
-        Integer id = artwork.block().getIdartwork();
-        artworkFullDTO.getArtworkBorrow().setIdartwork(id);
-        artworkFullDTO.getArtworkDetails().setIdartwork(id);
-        artworkBorrowR2dbcDao.save(artworkFullDTO.getArtworkBorrow()).block();
-        artworkDetailsR2dbcDao.save(artworkFullDTO.getArtworkDetails()).block();
-     }
+        Mono<ArtworkFull> artwork = artworkFullR2dbcDao.save(artworkFullDTO);
+    }
 }

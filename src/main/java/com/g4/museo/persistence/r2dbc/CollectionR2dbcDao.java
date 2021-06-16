@@ -11,9 +11,9 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public interface CollectionR2dbcDao extends R2dbcRepository<Collection, Integer> {
+    @Override
     @Cacheable("collections")
-    @Query("SELECT * from collection")
-    Flux<Collection> findAllCollections();
+    Flux<Collection> findAll();
 
     @Query("SELECT idcollection FROM collection WHERE name = :collectionName")
     Mono<Integer> findCollectionIdByName(@Param("collectionName") String name);

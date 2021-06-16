@@ -32,7 +32,6 @@
                      <children>
                         <Button fx:id="managementButton" alignment="CENTER" mnemonicParsing="false" onAction="#onManagementCalled" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: #2699FB;" text="Gestion" textFill="WHITE" />
                         <Button fx:id="logoutButton" alignment="CENTER" mnemonicParsing="false" onAction="#onLogoutCalled" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: #2699FB;" text="Déconnexion" textFill="WHITE" />
-                        <Button fx:id="loginButton" alignment="CENTER" mnemonicParsing="false" onAction="#onLoginCalled" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: #2699FB;" text="Connexion" textFill="WHITE" />
                      </children>
                   </VBox>
                </children></HBox>
@@ -42,9 +41,9 @@
                      <children>
                         <TextField fx:id="artworkSearch" promptText="Rechercher une oeuvre" style="-fx-padding: 15 0 0 0;" />
                         <TextField fx:id="authorSearch" promptText="Rechercher un artiste" style="-fx-padding: 15 0 0 0;" />
-                        <RadioButton prefWidth="180" mnemonicParsing="false" text="Oeuvres à rendre (urgent)" />
-                        <RadioButton prefWidth="180" mnemonicParsing="false" text="Oeuvres à rendre (1mois)" />
-                        <ComboBox prefHeight="25.0" prefWidth="110.0" fx:id="collectionBox" promptText="Collection" />
+                        <RadioButton fx:id="urgentReturnRadio" prefWidth="180" mnemonicParsing="false" text="Oeuvres à rendre (urgent)" />
+                        <RadioButton fx:id="returnRadio" prefWidth="180" mnemonicParsing="false" text="Oeuvres à rendre (1mois)" />
+                           <ComboBox prefHeight="25.0" prefWidth="110.0" fx:id="collectionBox" promptText="Collection" />
                         <ComboBox prefHeight="25.0" prefWidth="110.0" fx:id="stateBox" promptText="Statut" />
                      </children>
                   </HBox>

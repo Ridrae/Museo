@@ -11,7 +11,7 @@ public class FXMLController {
 
     protected Logger log = LoggerFactory.getLogger(FXMLController.class);
 
-    private static String prefix = "Controller";
+    private static String suffix = "Controller";
 
     private Parent root;
 
@@ -19,15 +19,15 @@ public class FXMLController {
         var loader = new FXMLLoader();
         String name = getFxmlName();
         loader.setLocation(getClass().getClassLoader().getResource(name));
-        loader.setControllerFactory(clz -> this);
+        loader.setControllerFactory(c -> this);
         return loader.load();
     }
 
     private String getFxmlName(){
         String name = this.getClass().getSimpleName();
         name = name.replace(".", "/");
-        if(name.endsWith(prefix)){
-            name = name.substring(0, name.lastIndexOf(prefix));
+        if(name.endsWith(suffix)){
+            name = name.substring(0, name.lastIndexOf(suffix));
         }
         return String.format("fxml/%s.fxml", name).toLowerCase();
     }

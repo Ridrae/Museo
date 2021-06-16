@@ -1,6 +1,8 @@
 package com.g4.museo.ui.fxml;
 
-import com.g4.museo.event.UserChangedEvent;
+import com.g4.museo.event.UserLoginEvent;
+import com.g4.museo.ui.utils.AlertWindowFactory;
+import com.g4.museo.ui.utils.ErrorWindowFactory;
 import com.gluonhq.charm.glisten.control.TextField;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -55,17 +57,11 @@ public class LoginFxmlController extends FXMLController implements Initializable
             Authentication request = new UsernamePasswordAuthenticationToken(userName, userPassword);
             Authentication result = authManager.authenticate(request);
             SecurityContextHolder.getContext().setAuthentication(result);
-            applicationEventPublisher.publishEvent(new UserChangedEvent(this));
-            var alertSuccessfulLogin = new Alert(Alert.AlertType.INFORMATION);
-            alertSuccessfulLogin.setHeaderText("Successful Login");
-            alertSuccessfulLogin.setContentText("Successfully logged in as " + SecurityContextHolder.getContext().getAuthentication().getName());
-            alertSuccessfulLogin.showAndWait();
+            AlertWindowFactory.create("Successful Login","Successfully logged in as " + SecurityContextHolder.getContext().getAuthentication().getName());
+            applicationEventPublisher.publishEvent(new UserLoginEvent(this));
             ((Stage)this.getView().getScene().getWindow()).close();
         } catch (AuthenticationException | IOException e) {
-            var alertWrongCredentials = new Alert(Alert.AlertType.INFORMATION);
-            alertWrongCredentials.setHeaderText("Login Error");
-            alertWrongCredentials.setContentText(e.getMessage());
-            alertWrongCredentials.showAndWait();
+            ErrorWindowFactory.create(e);
         }
     }
 

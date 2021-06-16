@@ -2,9 +2,9 @@ package com.g4.museo.event;
 
 import org.springframework.context.ApplicationEvent;
 
-public class UserChangedEvent extends ApplicationEvent {
+public class UserLoginEvent extends ApplicationEvent {
 
-    public UserChangedEvent(Object source) {
+    public UserLoginEvent(Object source) {
         super(source);
     }
 }

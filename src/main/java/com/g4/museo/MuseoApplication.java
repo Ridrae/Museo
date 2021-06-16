@@ -1,6 +1,7 @@
 package com.g4.museo;
 
 import com.g4.museo.event.AppReadyEvent;
+import com.g4.museo.ui.fxml.LoginFxmlController;
 import com.g4.museo.ui.fxml.MainFxmlController;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -38,6 +39,10 @@ public class MuseoApplication extends Application {
 
     private static boolean appReady = false;
 
+    public static Stage stage;
+
+    public static Stage loginStage;
+
     public static boolean isApplicationReady(){
         return appReady;
     }
@@ -58,13 +63,20 @@ public class MuseoApplication extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         log.info("Starting JavaFx");
-        var stage = primaryStage;
+        stage = primaryStage;
         stage.setTitle("Museo Application");
         stage.setResizable(false);
         MainFxmlController mainController = applicationContext.getBean(MainFxmlController.class);
         var mainScene = new Scene(mainController.getView());
         stage.setScene(mainScene);
-        stage.show();
+
+        loginStage = new Stage();
+        loginStage.setTitle("Museo Login");
+        loginStage.setResizable(false);
+        LoginFxmlController loginController = applicationContext.getBean(LoginFxmlController.class);
+        Scene loginScene = new Scene(loginController.getView());
+        loginStage.setScene(loginScene);
+        loginStage.show();
     }
 
     @Override

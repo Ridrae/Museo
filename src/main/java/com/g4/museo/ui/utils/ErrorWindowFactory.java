@@ -27,11 +27,9 @@ public class ErrorWindowFactory {
         var exceptionText = sw.toString();
 
         var label = new Label("The exception stacktrace was:");
-
         var textArea = new TextArea(exceptionText);
         textArea.setEditable(false);
         textArea.setWrapText(true);
-
         textArea.setMaxWidth(Double.MAX_VALUE);
         textArea.setMaxHeight(Double.MAX_VALUE);
         GridPane.setVgrow(textArea, Priority.ALWAYS);
@@ -41,9 +39,7 @@ public class ErrorWindowFactory {
         expContent.setMaxWidth(Double.MAX_VALUE);
         expContent.add(label, 0, 0);
         expContent.add(textArea, 0, 1);
-
         alert.getDialogPane().setExpandableContent(expContent);
-
         alert.showAndWait();
     }
 }

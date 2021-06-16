@@ -1,14 +1,13 @@
 package com.g4.museo.ui.fxml;
 
 import com.g4.museo.MuseoApplication;
-import com.g4.museo.event.AppReadyEvent;
-import com.g4.museo.event.ArtworkRefreshedEvent;
-import com.g4.museo.event.UserChangedEvent;
-import com.g4.museo.persistence.dto.ArtworkFullDTO;
+import com.g4.museo.event.*;
+import com.g4.museo.persistence.dto.ArtworkFull;
 import com.g4.museo.persistence.dto.Collection;
 import com.g4.museo.persistence.dto.ArtworkState;
 import com.g4.museo.persistence.r2dbc.*;
 import com.g4.museo.ui.utils.ErrorWindowFactory;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -17,16 +16,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.control.*;
 import javafx.stage.Stage;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -34,18 +28,16 @@ import org.springframework.context.event.EventListener;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
-import java.nio.ByteBuffer;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
-
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
 import com.gluonhq.charm.glisten.control.TextField;
 import reactor.core.publisher.Flux;
 
@@ -60,9 +52,6 @@ public class MainFxmlController extends FXMLController implements Initializable 
     CollectionR2dbcDao collectionR2dbcDao;
 
     @Autowired
-    ArtworkR2dbcDao artworkR2dbcDao;
-
-    @Autowired
     StateR2dbcDao stateR2dbcDao;
 
     @Autowired
@@ -72,16 +61,13 @@ public class MainFxmlController extends FXMLController implements Initializable 
     ApplicationEventPublisher applicationEventPublisher;
 
     @FXML
-    private Button loginButton;
-
-    @FXML
     private Button managementButton;
 
     @FXML
     private Button logoutButton;
 
     @FXML
-    private TableView<ArtworkFullDTO> artworkGrid;
+    private TableView<ArtworkFull> artworkGrid;
 
     @FXML
     private ComboBox<String> collectionBox;
@@ -95,73 +81,54 @@ public class MainFxmlController extends FXMLController implements Initializable 
     @FXML
     private TextField authorSearch;
 
-    private List<ArtworkFullDTO> artworks = new ArrayList<>();
+    @FXML
+    private RadioButton returnRadio;
+
+    @FXML
+    private RadioButton urgentReturnRadio;
+
+    private List<ArtworkFull> artworks = new ArrayList<>();
 
     private void populateArtworkGrid(){
-        Flux<ArtworkFullDTO> flux = artworkFullR2dbcDao.findAllArtworks();
-        TableColumn<ArtworkFullDTO, ImageView> picture = new TableColumn<>("Photo");
-        TableColumn<ArtworkFullDTO, String> name = new TableColumn<>("Nom de l'oeuvre");
-        TableColumn<ArtworkFullDTO, String> artist = new TableColumn<>("Nom de l'artiste");
-        TableColumn<ArtworkFullDTO, String> date = new TableColumn<>("Date de création");
-        TableColumn<ArtworkFullDTO, String> returnDate = new TableColumn<>("Date de rendu");
-        TableColumn<ArtworkFullDTO, String> localisation = new TableColumn<>("Localisation");
-        TableColumn<ArtworkFullDTO, String> state = new TableColumn<>("Statut");
+        Flux<ArtworkFull> flux = artworkFullR2dbcDao.findAll();
+        TableColumn<ArtworkFull, ImageView> picture = new TableColumn<>("Photo");
+        TableColumn<ArtworkFull, String> name = new TableColumn<>("Nom de l'oeuvre");
+        TableColumn<ArtworkFull, String> artist = new TableColumn<>("Nom de l'artiste");
+        TableColumn<ArtworkFull, String> date = new TableColumn<>("Date de création");
+        TableColumn<ArtworkFull, String> returnDate = new TableColumn<>("Date de rendu");
+        TableColumn<ArtworkFull, String> localisation = new TableColumn<>("Localisation");
+        TableColumn<ArtworkFull, String> state = new TableColumn<>("Statut");
         artworkGrid.getColumns().addAll(picture, name, artist, date, returnDate, localisation, state);
         artworkGrid.getColumns().forEach(c -> c.setStyle( "-fx-alignment: CENTER;"));
         flux.doOnComplete(() -> {
             artworkGrid.getItems().addAll(artworks);
-            AtomicReference<ImageView> image = new AtomicReference<>();
-            Subscriber<ByteBuffer> bytes = new Subscriber<ByteBuffer>() {
-                @Override
-                public void onSubscribe(Subscription subscription) {
-                    subscription.request(1);
-                }
-
-                @Override
-                public void onNext(ByteBuffer byteBuffer) {
-                    var tempImage = new ImageView();
-                    InputStream stream = new ByteArrayInputStream(byteBuffer.array());
-                    tempImage.setImage(new Image(stream));
-                    tempImage.setPreserveRatio(true);
-                    tempImage.setSmooth(true);
-                    tempImage.setCache(true);
-                    tempImage.setFitHeight(100);
-                    image.set(tempImage);
-                }
-
-                @Override
-                public void onError(Throwable throwable) {
-                    ErrorWindowFactory.create(new Exception(throwable));
-                }
-
-                @Override
-                public void onComplete() {
-                    //No operation necessary upon completion
-                }
-            };
             picture.setCellValueFactory(c -> {
-                c.getValue().getArtwork().getPicture().stream().subscribe(bytes);
-                return new SimpleObjectProperty<ImageView>(image.get());
+                var tempImage = new ImageView();
+                tempImage.setImage(new Image(new ByteArrayInputStream(c.getValue().getImage())));
+                tempImage.setPreserveRatio(true);
+                tempImage.setSmooth(true);
+                tempImage.setCache(true);
+                tempImage.setFitHeight(100);
+                return new SimpleObjectProperty<>(tempImage);
             });
-            name.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getArtwork().getName()));
-            artist.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getArtwork().getAuthor()));
-            date.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getArtwork().getDate().format(DateTimeFormatter.ISO_LOCAL_DATE)));
+            name.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getName()));
+            artist.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getAuthor()));
+            date.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getDate().format(DateTimeFormatter.ISO_LOCAL_DATE)));
             returnDate.setCellValueFactory(c-> {
-                if(c.getValue().getArtwork().isBorrowed()){
-                    return new SimpleStringProperty(c.getValue().getArtworkBorrow().getReturnDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+                if(c.getValue().isBorrowed()){
+                    return new SimpleStringProperty(c.getValue().getReturnDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
                 } else {
                     return new SimpleStringProperty("");
                 }
             });
-            localisation.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getArtwork().getStoredLocation()));
-            state.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getArtworkState().getStateName()));
+            localisation.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getStoredLocation()));
+            state.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getStateName()));
             applicationEventPublisher.publishEvent(new AppReadyEvent(this));
-        }).log().subscribe(artworks::add);
-
+        }).subscribe(artworks::add);
     }
 
     private void populateComboBox(){
-        Flux<Collection> fluxCollection = collectionR2dbcDao.findAllCollections();
+        Flux<Collection> fluxCollection = collectionR2dbcDao.findAll();
         List<Collection> collectionList = new ArrayList<>();
         fluxCollection.doOnComplete(() -> {
             collectionBox.getItems().addAll(collectionList
@@ -169,25 +136,11 @@ public class MainFxmlController extends FXMLController implements Initializable 
                     .map(Collection::getCollectionName)
                     .collect(Collectors.toList()));
             collectionBox.getItems().add(null);
-        }).log().subscribe(collectionList::add);
+        }).subscribe(collectionList::add);
         collectionBox.setOnAction(event -> {
-            ComboBox<String> box = (ComboBox) event.getSource();
-            if (box.getValue() != null) {
-                FilteredList<ArtworkFullDTO> filteredData = new FilteredList<>(FXCollections.observableArrayList(artworks));
-                filteredData.setPredicate(a -> {
-                    Boolean res;
-                    try{
-                        res = a.getCollection().getCollectionName().equalsIgnoreCase(box.getValue());
-                    } catch (NullPointerException e){
-                        res = false;
-                    }
-                    return res;
-                });
-                artworkGrid.setItems(filteredData);
-            } else {
-                FilteredList<ArtworkFullDTO> filteredData = new FilteredList<>(FXCollections.observableArrayList(artworks));
-                artworkGrid.setItems(filteredData);
-            }
+            FilteredList<ArtworkFull> filteredData = new FilteredList<>(FXCollections.observableArrayList(artworks));
+            filteredData.setPredicate(filterPredicate());
+            artworkGrid.setItems(filteredData);
         });
         Flux<ArtworkState> fluxState = stateR2dbcDao.getAllStates();
         List<ArtworkState> stateList = new ArrayList<>();
@@ -197,92 +150,60 @@ public class MainFxmlController extends FXMLController implements Initializable 
                 .collect(Collectors.toList()))).subscribe(stateList::add);
         stateBox.getItems().add(null);
         stateBox.setOnAction(event -> {
-            ComboBox<String> box = (ComboBox) event.getSource();
-            FilteredList<ArtworkFullDTO> filteredData = new FilteredList<>(FXCollections.observableArrayList(artworks));
-            if(box.getValue()!=null){
-                filteredData.setPredicate(a -> a.getArtworkState().getStateName()
-                        .equalsIgnoreCase(box.getValue()));
-            }
+            FilteredList<ArtworkFull> filteredData = new FilteredList<>(FXCollections.observableArrayList(artworks));
+            filteredData.setPredicate(filterPredicate());
             artworkGrid.setItems(filteredData);
         });
     }
 
     private void initSearchBars(){
         artworkSearch.textProperty().addListener((observable, oldValue, newValue) -> {
-            FilteredList<ArtworkFullDTO> filteredData = new FilteredList<>(FXCollections.observableArrayList(artworks));
-            if(!newValue.equals("")){
-                filteredData.setPredicate(a -> a.getArtwork().getName()
-                        .toLowerCase()
-                        .startsWith(newValue.toLowerCase()));
-            }
+            FilteredList<ArtworkFull> filteredData = new FilteredList<>(FXCollections.observableArrayList(artworks));
+            filteredData.setPredicate(filterPredicate());
             artworkGrid.setItems(filteredData);
         });
         authorSearch.textProperty().addListener((observable, oldValue, newValue) -> {
-            FilteredList<ArtworkFullDTO> filteredData = new FilteredList<>(FXCollections.observableArrayList(artworks));
-            if(!newValue.equals("")){
-                filteredData.setPredicate(a -> a.getArtwork().getAuthor()
-                        .toLowerCase()
-                        .contains(newValue.toLowerCase()));
-            }
+            FilteredList<ArtworkFull> filteredData = new FilteredList<>(FXCollections.observableArrayList(artworks));
+            filteredData.setPredicate(filterPredicate());
             artworkGrid.setItems(filteredData);
         });
 
-    }
-
-    @FXML
-    public void onLoginCalled(ActionEvent event){
-        var loginStage = new Stage();
-        loginStage.setTitle("Museo Login");
-        loginStage.setResizable(false);
-        LoginFxmlController loginController = applicationContext.getBean(LoginFxmlController.class);
-        Scene loginScene = null;
-        try {
-                if(loginController.getView().getScene() == null){
-                    loginScene = new Scene(loginController.getView());
-                } else if(loginController.getView().getScene().getWindow().isShowing()) {
-                    return;
-                } else {
-                    loginScene = loginController.getView().getScene();
-                }
-                loginStage.setScene(loginScene);
-                loginStage.show();
-        } catch (IOException e) {
-            ErrorWindowFactory.create(e);
-        }
     }
 
     @FXML
     public void onLogoutCalled(){
         SecurityContextHolder.clearContext();
         MuseoApplication.initAnonymous();
-        applicationEventPublisher.publishEvent(new UserChangedEvent(this));
+        MuseoApplication.stage.hide();
         var alertSuccessfulLogout = new Alert(Alert.AlertType.INFORMATION);
         alertSuccessfulLogout.setHeaderText("Successful Logout");
         alertSuccessfulLogout.setContentText("Successfully logged out");
         alertSuccessfulLogout.showAndWait();
+        MuseoApplication.loginStage.show();
     }
 
-    @EventListener(UserChangedEvent.class)
+    @EventListener(UserLoginEvent.class)
     public void updateRoles(){
         if(SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))){
             managementButton.setVisible(true);
-            loginButton.setVisible(false);
-            logoutButton.setVisible(true);
         } else {
             managementButton.setVisible(false);
-            loginButton.setVisible(true);
-            logoutButton.setVisible(false);
         }
+        Platform.runLater(()->{
+            MuseoApplication.stage.show();
+        });
     }
 
 
     @EventListener(ArtworkRefreshedEvent.class)
     public void updateArtworks(){
         artworks.clear();
-        Flux<ArtworkFullDTO> flux = artworkFullR2dbcDao.findAllArtworks();
+        Flux<ArtworkFull> flux = artworkFullR2dbcDao.findAll();
         flux.doOnComplete(() ->  {
-            FilteredList<ArtworkFullDTO> filteredData = new FilteredList<>(FXCollections.observableArrayList(artworks));
+            FilteredList<ArtworkFull> filteredData = new FilteredList<>(FXCollections.observableArrayList(artworks));
+            filteredData.setPredicate(filterPredicate());
             artworkGrid.setItems(filteredData);
+            applicationEventPublisher.publishEvent(new AlertReturnEvent(artworks));
         }).subscribe(artworks::add);
     }
 
@@ -292,6 +213,55 @@ public class MainFxmlController extends FXMLController implements Initializable 
         populateArtworkGrid();
         populateComboBox();
         initSearchBars();
+        initReturnFilters();
+    }
+
+    private void initReturnFilters(){
+        returnRadio.setOnAction(event -> {
+            FilteredList<ArtworkFull> filteredData = new FilteredList<>(FXCollections.observableArrayList(artworks));
+            filteredData.setPredicate(filterPredicate());
+            artworkGrid.setItems(filteredData);
+        });
+        urgentReturnRadio.setOnAction(event -> {
+            FilteredList<ArtworkFull> filteredData = new FilteredList<>(FXCollections.observableArrayList(artworks));
+            filteredData.setPredicate(filterPredicate());
+            artworkGrid.setItems(filteredData);
+        });
+    }
+
+    private Predicate<ArtworkFull> filterPredicate(){
+        return o -> {
+            var returnValue = true;
+            if (returnRadio.isSelected()){
+                returnValue = returnValue && (o.getReturnDate().isBefore(LocalDate.now().plusMonths(1)) || o.getReturnDate().isEqual(LocalDate.now().plusMonths(1)));
+            }
+            if(urgentReturnRadio.isSelected()){
+                returnValue = returnValue && (o.getReturnDate().isAfter(LocalDate.now()));
+            }
+            if (collectionBox.getValue()!=null){
+                Boolean res;
+                try{
+                    res = o.getCollectionName().equalsIgnoreCase(collectionBox.getValue());
+                } catch (NullPointerException e){
+                    res = false;
+                }
+                returnValue = returnValue && res;
+            }
+            if(stateBox.getValue()!=null){
+                returnValue = returnValue && o.getStateName().equalsIgnoreCase(stateBox.getValue());
+            }
+            if(!artworkSearch.textProperty().getValue().equals("")){
+                returnValue = returnValue && o.getName()
+                        .toLowerCase()
+                        .startsWith(artworkSearch.textProperty().getValue().toLowerCase());
+            }
+            if(!authorSearch.textProperty().getValue().equals("")){
+                returnValue = returnValue && o.getAuthor()
+                        .toLowerCase()
+                        .startsWith(authorSearch.textProperty().getValue().toLowerCase());
+            }
+            return returnValue;
+        };
     }
 
     @FXML
@@ -300,7 +270,7 @@ public class MainFxmlController extends FXMLController implements Initializable 
         managementStage.setTitle("Museo Management");
         managementStage.setResizable(false);
         ManagementFxmlController managementController = applicationContext.getBean(ManagementFxmlController.class);
-        Scene managementScene = null;
+        Scene managementScene;
         try {
             if(managementController.getView().getScene() == null){
                 managementScene = new Scene(managementController.getView());
