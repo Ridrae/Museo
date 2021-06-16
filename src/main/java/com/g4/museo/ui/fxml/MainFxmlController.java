@@ -64,9 +64,6 @@ public class MainFxmlController extends FXMLController implements Initializable 
     private Button managementButton;
 
     @FXML
-    private Button logoutButton;
-
-    @FXML
     private TableView<ArtworkFull> artworkGrid;
 
     @FXML
@@ -91,6 +88,16 @@ public class MainFxmlController extends FXMLController implements Initializable 
 
     private void populateArtworkGrid(){
         Flux<ArtworkFull> flux = artworkFullR2dbcDao.findAll();
+        artworkGrid.setRowFactory(tr -> {
+            TableRow<ArtworkFull> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
+                    ArtworkFull rowData = row.getItem();
+                    onDisplayArtworkCalled(rowData);
+                }
+            });
+            return row;
+        });
         TableColumn<ArtworkFull, ImageView> picture = new TableColumn<>("Photo");
         TableColumn<ArtworkFull, String> name = new TableColumn<>("Nom de l'oeuvre");
         TableColumn<ArtworkFull, String> artist = new TableColumn<>("Nom de l'artiste");
@@ -104,7 +111,7 @@ public class MainFxmlController extends FXMLController implements Initializable 
             artworkGrid.getItems().addAll(artworks);
             picture.setCellValueFactory(c -> {
                 var tempImage = new ImageView();
-                tempImage.setImage(new Image(new ByteArrayInputStream(c.getValue().getImage())));
+                tempImage.setImage(c.getValue().getImage());
                 tempImage.setPreserveRatio(true);
                 tempImage.setSmooth(true);
                 tempImage.setCache(true);
@@ -189,9 +196,11 @@ public class MainFxmlController extends FXMLController implements Initializable 
         } else {
             managementButton.setVisible(false);
         }
-        Platform.runLater(()->{
-            MuseoApplication.stage.show();
-        });
+        if (!SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))){
+            Platform.runLater(()->{
+                MuseoApplication.stage.show();
+            });
+        }
     }
 
 
@@ -310,21 +319,22 @@ public class MainFxmlController extends FXMLController implements Initializable 
     }
 
     @FXML
-    public void onDisplayArtworkCalled(MouseEvent event){
+    public void onDisplayArtworkCalled(ArtworkFull artwork){
         var displayartworkStage = new Stage();
         displayartworkStage.setTitle("Museo Diplay Artwork");
         displayartworkStage.setResizable(false);
-        DisplayArtworkFxmlController displayartworkController = applicationContext.getBean(DisplayArtworkFxmlController.class);
+        DisplayArtworkFxmlController displayArtworkFxmlController = applicationContext.getBean(DisplayArtworkFxmlController.class);
         Scene displayartworkScene = null;
         try {
-            if(displayartworkController.getView().getScene() == null){
-                displayartworkScene = new Scene(displayartworkController.getView());
-            } else if(displayartworkController.getView().getScene().getWindow().isShowing()) {
+            if(displayArtworkFxmlController.getView().getScene() == null){
+                displayartworkScene = new Scene(displayArtworkFxmlController.getView());
+            } else if(displayArtworkFxmlController.getView().getScene().getWindow().isShowing()) {
                 return;
             } else {
-                displayartworkScene = displayartworkController.getView().getScene();
+                displayartworkScene = displayArtworkFxmlController.getView().getScene();
             }
             displayartworkStage.setScene(displayartworkScene);
+            displayArtworkFxmlController.setArtwork(artwork);
             displayartworkStage.show();
         } catch (IOException e) {
             ErrorWindowFactory.create(e);

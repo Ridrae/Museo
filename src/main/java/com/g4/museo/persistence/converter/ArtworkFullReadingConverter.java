@@ -4,11 +4,14 @@ import com.g4.museo.persistence.dto.*;
 import com.g4.museo.ui.utils.ErrorWindowFactory;
 import io.r2dbc.spi.Blob;
 import io.r2dbc.spi.Row;
+import javafx.scene.image.Image;
 import org.apache.commons.lang3.BooleanUtils;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
+
+import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;
 import java.time.LocalDate;
 
@@ -44,10 +47,10 @@ public class ArtworkFullReadingConverter implements Converter<Row, ArtworkFull> 
                 .technic(source.get("technic", String.class))
                 .type(source.get("type", String.class))
                 .collectionName(source.get("collection_name", String.class))
-                .firstname(source.get("owner_firstname", String.class))
-                .lastname(source.get("owner_lastname", String.class))
-                .orga(source.get("owner_orga", String.class))
-                .adress(source.get("owner_adress", String.class))
+                .ownerFirstname(source.get("owner_firstname", String.class))
+                .ownerLastname(source.get("owner_lastname", String.class))
+                .ownerOrga(source.get("owner_orga", String.class))
+                .ownerAddress(source.get("owner_adress", String.class))
                 .stateName(source.get("state_name", String.class));
 
         if(source.get("is_restored", Byte.class) != null){
@@ -56,7 +59,7 @@ public class ArtworkFullReadingConverter implements Converter<Row, ArtworkFull> 
 
         Blob picture = source.get("picture", Blob.class);
         final var image = new byte[1][1];
-        Subscriber<ByteBuffer> bytes = new Subscriber<ByteBuffer>() {
+        Subscriber<ByteBuffer> bytes = new Subscriber<>() {
             @Override
             public void onSubscribe(Subscription subscription) {
                 subscription.request(1);
@@ -78,7 +81,7 @@ public class ArtworkFullReadingConverter implements Converter<Row, ArtworkFull> 
             }
         };
         picture.stream().subscribe(bytes);
-        artworkBuilder.image(image[0]);
+        artworkBuilder.image(new Image(new ByteArrayInputStream(image[0])));
 
         return artworkBuilder.build();
     }

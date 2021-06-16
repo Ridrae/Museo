@@ -1,6 +1,7 @@
 package com.g4.museo.persistence.dto;
 
 import io.r2dbc.spi.Blob;
+import javafx.scene.image.Image;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.lang.Nullable;
@@ -41,9 +42,9 @@ public class ArtworkFull {
     private boolean restored;
     private String collectionName;
     private String stateName;
-    private String firstname;
-    private String lastname;
-    private String orga;
-    private String adress;
-    private byte[] image;
+    private String ownerFirstname;
+    private String ownerLastname;
+    private String ownerOrga;
+    private String ownerAddress;
+    private Image image;
 }

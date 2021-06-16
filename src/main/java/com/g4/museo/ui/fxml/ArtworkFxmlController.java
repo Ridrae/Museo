@@ -155,7 +155,7 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
     }
 
     private void initComboBox(){
-        Flux<Owner> flux = ownerR2dbcDao.findAllOwners();
+        Flux<Owner> flux = ownerR2dbcDao.findAll();
         List<Owner> ownersList = new ArrayList<>();
         flux.doOnComplete(() -> ownersList.forEach(owner -> {
             if(owner.getFirstname() != null && owner.getLastname() != null){
@@ -189,7 +189,6 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
 
     @FXML
     public void onAddPicture(){
-
         Stage stage = null;
         try {
             stage = (Stage) this.getView().getScene().getWindow();

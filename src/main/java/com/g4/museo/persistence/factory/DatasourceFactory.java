@@ -20,7 +20,7 @@ import java.util.List;
 @ComponentScan(basePackages = "com.g4.museo")
 @EnableR2dbcRepositories
 public class DatasourceFactory extends AbstractR2dbcConfiguration {
-    @Bean
+    /*@Bean
     public DataSource getDataSource() {
         DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName("com.mysql.cj.jdbc.Driver");
@@ -36,6 +36,30 @@ public class DatasourceFactory extends AbstractR2dbcConfiguration {
         ConnectionFactoryOptions options = ConnectionFactoryOptions.builder()
                 .option(ConnectionFactoryOptions.DRIVER, "mysql")
                 .option(ConnectionFactoryOptions.HOST, "museo-sql.mysql.database.azure.com")
+                .option(ConnectionFactoryOptions.PORT, 3306)
+                .option(ConnectionFactoryOptions.DATABASE, "museo")
+                .option(ConnectionFactoryOptions.USER, "dev")
+                .option(ConnectionFactoryOptions.PASSWORD, "FVEgUUg4HNqR4bD8")
+                .build();
+        return ConnectionFactories.get(options);
+    }*/
+
+    @Bean
+    public DataSource getDataSource() {
+        DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
+        dataSourceBuilder.driverClassName("com.mysql.cj.jdbc.Driver");
+        dataSourceBuilder.url("jdbc:mysql://127.0.0.1:3306/museo");
+        dataSourceBuilder.username("dev");
+        dataSourceBuilder.password("FVEgUUg4HNqR4bD8");
+        return dataSourceBuilder.build();
+    }
+
+    @Override
+    @Bean
+    public ConnectionFactory connectionFactory() {
+        ConnectionFactoryOptions options = ConnectionFactoryOptions.builder()
+                .option(ConnectionFactoryOptions.DRIVER, "mysql")
+                .option(ConnectionFactoryOptions.HOST, "127.0.0.1")
                 .option(ConnectionFactoryOptions.PORT, 3306)
                 .option(ConnectionFactoryOptions.DATABASE, "museo")
                 .option(ConnectionFactoryOptions.USER, "dev")
