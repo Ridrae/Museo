@@ -124,7 +124,7 @@
                   <Font size="21.0" />
                </font>
             </Label>
-            <Button layoutX="577.0" layoutY="669.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="127.0" text="Ajouter" />
+            <Button layoutX="577.0" layoutY="669.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="127.0" onAction="#updateArtwork" text="Modifier" />
             <TextArea fx:id="descField" layoutX="751.0" layoutY="153.0" prefHeight="155.0" prefWidth="419.0" />
             <Label fx:id="descLabel" layoutX="875.0" layoutY="114.0" text="Texte descriptif :" underline="true">
                <font>

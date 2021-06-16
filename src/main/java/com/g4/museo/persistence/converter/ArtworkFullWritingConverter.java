@@ -23,7 +23,7 @@ public class ArtworkFullWritingConverter implements Converter<ArtworkFull, Outbo
         row.put("name", Parameter.from(artwork.getName()));
         row.put("author", Parameter.from(artwork.getAuthor()));
         final var picture = new ByteBuffer[1];
-        Subscriber<ByteBuffer> bytes = new Subscriber<ByteBuffer>() {
+        Subscriber<ByteBuffer> bytes = new Subscriber<>() {
             @Override
             public void onSubscribe(Subscription subscription) {
                 subscription.request(1);

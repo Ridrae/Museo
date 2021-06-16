@@ -1,10 +1,12 @@
 package com.g4.museo.ui.fxml;
 
+import com.g4.museo.event.ArtworkRefreshedEvent;
 import com.g4.museo.event.UserLoginEvent;
 import com.g4.museo.persistence.dto.ArtworkFull;
 import com.g4.museo.persistence.dto.ArtworkState;
 import com.g4.museo.persistence.dto.Collection;
 import com.g4.museo.persistence.dto.Owner;
+import com.g4.museo.persistence.r2dbc.ArtworkFullR2dbcDao;
 import com.g4.museo.persistence.r2dbc.CollectionR2dbcDao;
 import com.g4.museo.persistence.r2dbc.OwnerR2dbcDao;
 import com.g4.museo.persistence.r2dbc.StateR2dbcDao;
@@ -21,7 +23,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -52,6 +57,12 @@ public class DisplayArtworkFxmlController extends FXMLController implements Init
 
     @Autowired
     StateR2dbcDao stateR2dbcDao;
+
+    @Autowired
+    ArtworkFullR2dbcDao artworkFullR2dbcDao;
+
+    @Autowired
+    ApplicationEventPublisher applicationEventPublisher;
 
     @FXML
     ComboBox<String> ownerBox;
@@ -238,37 +249,33 @@ public class DisplayArtworkFxmlController extends FXMLController implements Init
     }
 
     public void updateArtwork(){
-        if(!authorField.getText().equals(artworkFull.getAuthor())){
-            artworkFull.setAuthor(authorField.getText());
+        artworkFull.setAuthor(authorField.getText());
+        artworkFull.setName(nameField.getText());
+        artworkFull.setDate(dateField.getValue());
+        artworkFull.setDateBorrowed(borrowField.getValue());
+        artworkFull.setReturnDate(returnField.getValue());
+        artworkFull.setStoredLocation(stateField.getText());
+        artworkFull.setCertified(certificateBox.isSelected());
+        artworkFull.setStored(storedBox.isSelected());
+        if(ownerBox.getValue().equals("Museo") && artworkFull.isBorrowed()){
+            artworkFull.setBorrowed(false);
+            artworkFull.setIdowner(ownerR2dbcDao.findOwnerIdByOrga("Museo").block());
+        } else if (!ownerBox.getValue().equals("Museo")){
+            String firstname = ownerBox.getValue().split(" ")[0];
+            String lastname = ownerBox.getValue().split(" ")[1];
+            if(!(firstname.equals(artworkFull.getOwnerFirstname()) && lastname.equals(artworkFull.getOwnerLastname()))){
+                artworkFull.setBorrowed(true);
+                artworkFull.setIdowner(ownerR2dbcDao.findOwnerIdByName(firstname, lastname).block());
+            }
         }
-        if(!nameField.getText().equals(artworkFull.getName())){
-            artworkFull.setName(nameField.getText());
+        if(!collectionBox.getValue().equals(artworkFull.getCollectionName())){
+            artworkFull.setCollectionID(collectionR2dbcDao.findCollectionIdByName(collectionBox.getValue()).block());
         }
-        if(!dateField.getValue().isEqual(artworkFull.getDate())){
-            artworkFull.setDate(dateField.getValue());
-        }
-        if(!borrowField.getValue().equals(artworkFull.getDateBorrowed())){
-            artworkFull.setDateBorrowed(borrowField.getValue());
-        }
-        if(!returnField.getValue().equals(artworkFull.getReturnDate())){
-            artworkFull.setReturnDate(returnField.getValue());
-        }
-        if(!stateField.getText().equals(artworkFull.getStoredLocation())){
-            artworkFull.setStoredLocation(stateField.getText());
-        }
-        if(certificateBox.isSelected() != artworkFull.isCertified()){
-            artworkFull.setCertified(certificateBox.isSelected());
-        }
-        if(storedBox.isSelected() != artworkFull.isStored()){
-            artworkFull.setStored(storedBox.isSelected());
-        }
-        String firstname = ownerBox.getValue().split(" ")[0];
-        String lastname = ownerBox.getValue().split(" ")[1];
-        if(!(firstname.equals(artworkFull.getOwnerFirstname()) && lastname.equals(artworkFull.getOwnerLastname()))){
-
+        if(!stateBox.getValue().equals(artworkFull.getStateName())){
+            artworkFull.setStateID(stateR2dbcDao.findStateIdByName(stateBox.getValue()).block());
         }
         if (SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
-            if(!pictureView.getImage().equals(artworkFull.getImage())){
+            if (!pictureView.getImage().equals(artworkFull.getImage())) {
                 ByteBuffer bytes = null;
                 try {
                     bytes = ByteBuffer.wrap(Files.readAllBytes(imageFile.toPath()));
@@ -279,21 +286,30 @@ public class DisplayArtworkFxmlController extends FXMLController implements Init
                     ErrorWindowFactory.create(e);
                 }
             }
-            if(!descField.getText().equals(artworkFull.getDesc())){
-                artworkFull.setDesc(descField.getText());
+            artworkFull.setDesc(descField.getText());
+            artworkFull.setHeight(heigthField.getText());
+            artworkFull.setWidth(widthField.getText());
+            artworkFull.setPerimeter(perimeterField.getText());
+            artworkFull.setInsuranceNumber(insuranceField.getText());
+            artworkFull.setMaterial(materialField.getText());
+            artworkFull.setTechnic(technicField.getText());
+            artworkFull.setType(typeField.getText());
+            artworkFull.setRestored(!restoredBox.getValue().equals("Neuf"));
+            artworkFullR2dbcDao.updateArtwork(artworkFull.getIdartwork(), artworkFull.getName(), artworkFull.getAuthor(), artworkFull.getDate(),
+                    artworkFull.isCertified(), artworkFull.getStoredLocation(), artworkFull.getCollectionID(), artworkFull.getStateID(), artworkFull.isBorrowed(),
+                    artworkFull.getDesc(), SecurityContextHolder.getContext().getAuthentication().getName()).block();
+            if(imageFile!=null){
+                try {
+                    byte[] picture  = Files.readAllBytes(imageFile.toPath());
+                    artworkFullR2dbcDao.updatePicture(artworkFull.getIdartwork(), picture).subscribe();
+                } catch (IOException e) {
+                    ErrorWindowFactory.create(e);
+                }
             }
-            if(!heigthField.getText().equals(artworkFull.getHeight())){
-                artworkFull.setHeight(heigthField.getText());
-            }
-            if(!widthField.getText().equals(artworkFull.getWidth())){
-                artworkFull.setWidth(widthField.getText());
-            }
-            if(!perimeterField.getText().equals(artworkFull.getPerimeter())){
-                artworkFull.setPerimeter(perimeterField.getText());
-            }
-            if(!insuranceField.getText().equals(artworkFull.getInsuranceNumber())){
-                artworkFull.setInsuranceNumber(insuranceField.getText());
-            }
+            artworkFullR2dbcDao.updateDetails(artworkFull.getIdartwork(), artworkFull.getWidth(), artworkFull.getHeight(), artworkFull.getPerimeter(),
+                    artworkFull.getInsuranceNumber(), artworkFull.getMaterial(), artworkFull.getTechnic(), artworkFull.getType(), artworkFull.isRestored()).block();
+            artworkFullR2dbcDao.updateBorrow(artworkFull.getIdartwork(), artworkFull.getIdowner(), artworkFull.getDateBorrowed(), artworkFull.getReturnDate(), artworkFull.isStored(), artworkFull.isLongTerm()).block();
+            applicationEventPublisher.publishEvent(new ArtworkRefreshedEvent(this));
         }
     }
 
