@@ -10,7 +10,7 @@ import org.springframework.r2dbc.core.Parameter;
 public class CollectionWritingConverter implements Converter<Collection, OutboundRow> {
     @Override
     public OutboundRow convert(Collection collection) {
-        OutboundRow row = new OutboundRow();
+        var row = new OutboundRow();
         if(collection.getCollectionID() != null) {
             row.put("idcollection", Parameter.from(collection.getCollectionID()));
         }

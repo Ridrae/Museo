@@ -11,23 +11,23 @@ public class FXMLController {
 
     protected Logger log = LoggerFactory.getLogger(FXMLController.class);
 
-    private static String prefix = "Controller";
+    private static String suffix = "Controller";
 
     private Parent root;
 
     public Parent load() throws IOException {
-        FXMLLoader loader = new FXMLLoader();
+        var loader = new FXMLLoader();
         String name = getFxmlName();
         loader.setLocation(getClass().getClassLoader().getResource(name));
-        loader.setControllerFactory(clz -> this);
+        loader.setControllerFactory(c -> this);
         return loader.load();
     }
 
     private String getFxmlName(){
         String name = this.getClass().getSimpleName();
-        name = name.replaceAll("\\.", "/");
-        if(name.endsWith(prefix)){
-            name = name.substring(0, name.lastIndexOf(prefix));
+        name = name.replace(".", "/");
+        if(name.endsWith(suffix)){
+            name = name.substring(0, name.lastIndexOf(suffix));
         }
         return String.format("fxml/%s.fxml", name).toLowerCase();
     }

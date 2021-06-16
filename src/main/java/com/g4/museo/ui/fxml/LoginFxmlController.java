@@ -1,12 +1,13 @@
 package com.g4.museo.ui.fxml;
 
-import com.g4.museo.event.UserChangedEvent;
+import com.g4.museo.event.UserLoginEvent;
+import com.g4.museo.ui.utils.AlertWindowFactory;
+import com.g4.museo.ui.utils.ErrorWindowFactory;
 import com.gluonhq.charm.glisten.control.TextField;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
@@ -17,7 +18,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -44,8 +44,8 @@ public class LoginFxmlController extends FXMLController implements Initializable
 
     @FXML
     public void onReturn(ActionEvent event){
-        Scene scene = (Scene) ((Node) event.getSource()).getScene();
-        Stage stage = (Stage)scene.getWindow();
+        var scene = ((Node) event.getSource()).getScene();
+        var stage = (Stage)scene.getWindow();
         stage.close();
     }
 
@@ -57,17 +57,11 @@ public class LoginFxmlController extends FXMLController implements Initializable
             Authentication request = new UsernamePasswordAuthenticationToken(userName, userPassword);
             Authentication result = authManager.authenticate(request);
             SecurityContextHolder.getContext().setAuthentication(result);
-            applicationEventPublisher.publishEvent(new UserChangedEvent(this));
-            Alert alertSuccessfulLogin = new Alert(Alert.AlertType.INFORMATION);
-            alertSuccessfulLogin.setHeaderText("Successful Login");
-            alertSuccessfulLogin.setContentText("Successfully logged in as " + SecurityContextHolder.getContext().getAuthentication().getName());
-            alertSuccessfulLogin.showAndWait();
+            AlertWindowFactory.create("Successful Login","Successfully logged in as " + SecurityContextHolder.getContext().getAuthentication().getName());
+            applicationEventPublisher.publishEvent(new UserLoginEvent(this));
             ((Stage)this.getView().getScene().getWindow()).close();
         } catch (AuthenticationException | IOException e) {
-            Alert alertWrongCredentials = new Alert(Alert.AlertType.INFORMATION);
-            alertWrongCredentials.setHeaderText("Login Error");
-            alertWrongCredentials.setContentText(e.getMessage());
-            alertWrongCredentials.showAndWait();
+            ErrorWindowFactory.create(e);
         }
     }
 

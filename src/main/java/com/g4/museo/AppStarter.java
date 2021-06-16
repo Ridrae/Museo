@@ -1,7 +1,5 @@
 package com.g4.museo;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 public class AppStarter implements Runnable{
 
     public static void main(String[] args) {
@@ -14,5 +12,6 @@ public class AppStarter implements Runnable{
 
     @Override
     public void run() {
+        //no need to run anything here
     }
 }

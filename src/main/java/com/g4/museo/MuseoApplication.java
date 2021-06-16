@@ -1,5 +1,7 @@
 package com.g4.museo;
 
+import com.g4.museo.event.AppReadyEvent;
+import com.g4.museo.ui.fxml.LoginFxmlController;
 import com.g4.museo.ui.fxml.MainFxmlController;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -13,6 +15,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ApplicationEventMulticaster;
+import org.springframework.context.event.EventListener;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -34,6 +37,21 @@ public class MuseoApplication extends Application {
 
     private ConfigurableApplicationContext applicationContext;
 
+    private static boolean appReady = false;
+
+    public static Stage stage;
+
+    public static Stage loginStage;
+
+    public static boolean isApplicationReady(){
+        return appReady;
+    }
+
+    @EventListener(AppReadyEvent.class)
+    private void setAppReady(){
+        appReady = true;
+    }
+
     @Override
     public void init() throws Exception {
         log.info("Initializing Spring Context");
@@ -45,13 +63,20 @@ public class MuseoApplication extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         log.info("Starting JavaFx");
-        Stage stage = primaryStage;
+        stage = primaryStage;
         stage.setTitle("Museo Application");
         stage.setResizable(false);
         MainFxmlController mainController = applicationContext.getBean(MainFxmlController.class);
-        Scene mainScene = new Scene(mainController.getView());
+        var mainScene = new Scene(mainController.getView());
         stage.setScene(mainScene);
-        stage.show();
+
+        loginStage = new Stage();
+        loginStage.setTitle("Museo Login");
+        loginStage.setResizable(false);
+        LoginFxmlController loginController = applicationContext.getBean(LoginFxmlController.class);
+        Scene loginScene = new Scene(loginController.getView());
+        loginStage.setScene(loginScene);
+        loginStage.show();
     }
 
     @Override
@@ -73,7 +98,7 @@ public class MuseoApplication extends Application {
     }
 
     public static void initAnonymous() {
-        AnonymousAuthenticationToken auth = new AnonymousAuthenticationToken(
+        var auth = new AnonymousAuthenticationToken(
                 "anonymous", "anonymous",
                 AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS"));
 
@@ -82,7 +107,7 @@ public class MuseoApplication extends Application {
 
     @Bean(name = "applicationEventMulticaster")
     public ApplicationEventMulticaster simpleApplicationEventMulticaster() {
-        SimpleApplicationEventMulticaster eventMulticaster =
+        var eventMulticaster =
                 new SimpleApplicationEventMulticaster();
 
         eventMulticaster.setTaskExecutor(new SimpleAsyncTaskExecutor());
