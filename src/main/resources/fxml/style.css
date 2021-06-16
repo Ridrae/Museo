@@ -1,0 +1,15 @@
+.combo-box .list-cell{
+    -fx-text-fill : white;
+    -fx-font-family: "Open Sans";
+}
+
+.list-view{
+    -fx-text-fill : black;
+}
+
+#titre{
+    -fx-font-family: "Brand";
+}
+.Label{
+    -fx-font-family: "Brand";
+}
