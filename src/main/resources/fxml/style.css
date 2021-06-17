@@ -18,6 +18,7 @@
 }
 .combo-box .list-cell:hover{
     -fx-background-color:#4F000B;
+    -fx-text-fill: white!important;
 }
 
 .combo-box .cell:selected {

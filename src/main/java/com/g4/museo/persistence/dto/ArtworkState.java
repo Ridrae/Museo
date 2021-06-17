@@ -12,6 +12,6 @@ import org.springframework.data.annotation.Id;
 @ToString
 public class ArtworkState {
     @Id
-    private int stateID;
+    private int idstate;
     private String stateName;
 }

@@ -11,8 +11,8 @@ public class CollectionWritingConverter implements Converter<Collection, Outboun
     @Override
     public OutboundRow convert(Collection collection) {
         var row = new OutboundRow();
-        if(collection.getCollectionID() != null) {
-            row.put("idcollection", Parameter.from(collection.getCollectionID()));
+        if(collection.getIdcollection() != null) {
+            row.put("idcollection", Parameter.from(collection.getIdcollection()));
         }
         row.put("name", Parameter.from(collection.getCollectionName()));
         return row;

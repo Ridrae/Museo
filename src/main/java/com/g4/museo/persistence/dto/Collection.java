@@ -12,6 +12,6 @@ import org.springframework.data.annotation.Id;
 @ToString
 public class Collection {
     @Id
-    private Integer collectionID;
+    private Integer idcollection;
     private String collectionName;
 }

@@ -10,7 +10,7 @@ public class StateReadingConverter implements Converter<Row, ArtworkState> {
     @Override
     public ArtworkState convert(Row source) {
         return ArtworkState.builder()
-                .stateID(source.get("idstate", Integer.class))
+                .idstate(source.get("idstate", Integer.class))
                 .stateName(source.get("state_name", String.class))
                 .build();
     }

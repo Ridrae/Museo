@@ -10,7 +10,7 @@ public class CollectionReadingConverter implements Converter<Row, Collection> {
     @Override
     public Collection convert(Row source) {
         return Collection.builder()
-                .collectionID(source.get("idcollection", Integer.class))
+                .idcollection(source.get("idcollection", Integer.class))
                 .collectionName(source.get("name", String.class))
                 .build();
     }

@@ -3,13 +3,15 @@ package com.g4.museo.ui.fxml;
 import com.g4.museo.event.CollectionRefreshEvent;
 import com.g4.museo.event.OwnerRefreshEvent;
 import com.g4.museo.event.StateRefreshEvent;
-import com.g4.museo.event.UserAddedEvent;
+import com.g4.museo.event.UserRefreshEvent;
 import com.g4.museo.persistence.dto.*;
 import com.g4.museo.persistence.r2dbc.CollectionR2dbcDao;
 import com.g4.museo.persistence.r2dbc.OwnerR2dbcDao;
 import com.g4.museo.persistence.r2dbc.StateR2dbcDao;
 import com.g4.museo.persistence.r2dbc.UserR2dbcDao;
 import com.g4.museo.ui.utils.AlertWindowFactory;
+import com.g4.museo.ui.utils.ConfirmWindowFactory;
+import com.g4.museo.ui.utils.EditWindowFactory;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -23,6 +25,7 @@ import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -31,6 +34,7 @@ import reactor.core.publisher.Mono;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -152,7 +156,7 @@ public class ManagementFxmlController extends FXMLController implements Initiali
         }).subscribe(users::add);
     }
 
-    @EventListener(UserAddedEvent.class)
+    @EventListener(UserRefreshEvent.class)
     private void updateUser(){
         users.clear();
         Flux<User> userFlux = userR2dbcDao.findAll();
@@ -173,6 +177,86 @@ public class ManagementFxmlController extends FXMLController implements Initiali
             Mono<Collection> newCollection = collectionR2dbcDao.save(collection);
             collectionGrid.getItems().add(newCollection.block());
             applicationEventPublisher.publishEvent(new CollectionRefreshEvent(this));
+        }
+    }
+
+    @FXML
+    private void deleteCollection(){
+        try {
+            Collection collection = collectionGrid.getSelectionModel().getSelectedItem();
+            if (ConfirmWindowFactory.create("Confirmer la suppression", "Voulez-vous supprimer la collection " + collection.getCollectionName() + " ?").get().getText().equals("Confirm")){
+                collectionR2dbcDao.delete(collection).block();
+                collectionGrid.getItems().remove(collection);
+                applicationEventPublisher.publishEvent(new CollectionRefreshEvent(this));
+            }
+        } catch (NullPointerException e) {
+            AlertWindowFactory.create("Selectionnez une collection", "Veuillez selectionner une collection à supprimer");
+        }
+    }
+
+    @FXML
+    private void editCollection(){
+        try{
+            Collection collection = collectionGrid.getSelectionModel().getSelectedItem();
+            Optional<String> result =  EditWindowFactory.create("Edition de la collection: " + collection.getCollectionName(), "Entrez un nouveau nom: ");
+            if(result.isPresent()){
+                collectionGrid.getItems().remove(collection);
+                collection.setCollectionName(result.get());
+                collectionR2dbcDao.save(collection).block();
+                collectionGrid.getItems().add(collection);
+                applicationEventPublisher.publishEvent(new CollectionRefreshEvent(this));
+            }
+        } catch (NullPointerException e){
+            AlertWindowFactory.create("Selectionnez une collection", "Veuillez selectionner une collection à modifier");
+        }
+    }
+
+    @FXML
+    private void deleteUser(){
+        try {
+            User user = userGrid.getSelectionModel().getSelectedItem();
+            if (!user.getAuthority().equals("USER_ADMIN")) {
+                if (ConfirmWindowFactory.create("Confirmer la suppression", "Voulez-vous supprimer l'utilisateur " + user.getUsername() + " ?").get().getText().equals("Confirm")){
+                    userGrid.getItems().remove(user);
+                    userR2dbcDao.deleteAuthorities(user.getUsername()).block();
+                    userR2dbcDao.deleteUser(user.getUsername()).block();
+                    applicationEventPublisher.publishEvent(new UserRefreshEvent(this));
+                }
+            }
+        } catch (NullPointerException e) {
+            AlertWindowFactory.create("Selectionnez un utilisateur", "Veuillez selectionner un utilisateur à supprimer");
+        }
+    }
+
+    @FXML
+    private void editUser(){
+        try{
+            User user = userGrid.getSelectionModel().getSelectedItem();
+            if (SecurityContextHolder.getContext().getAuthentication().getName().equals(user.getUsername())){
+                AlertWindowFactory.create("Utilisateur incorrect", "Vous ne pouvez pas modifier l'utilisateur actuellement connecté");
+            } else {
+                Optional<String> result =  EditWindowFactory.create("Edition de l'utilisateur: " + user.getUsername(), "Entrez un nouveau nom: ");
+                if (result.isPresent()){
+                    userR2dbcDao.updateUser(user.getUsername(), result.get()).block();
+                    applicationEventPublisher.publishEvent(new UserRefreshEvent(this));
+                }
+            }
+        } catch(NullPointerException e){
+            AlertWindowFactory.create("Selectionnez un utilisateur", "Veuillez selectionner un utilisateur à modifier");
+        }
+    }
+
+    @FXML
+    private void deleteState(){
+        try{
+            ArtworkState state = stateGrid.getSelectionModel().getSelectedItem();
+            if(ConfirmWindowFactory.create("Confirmer la suppression", "Voulez-vous supprimer l'état " + state.getStateName() + " ?").get().getText().equals("Confirm")){
+                stateR2dbcDao.delete(state).block();
+                stateGrid.getItems().remove(state);
+                applicationEventPublisher.publishEvent(new StateRefreshEvent(this));
+            }
+        } catch(NullPointerException e){
+            AlertWindowFactory.create("Selectionnez un état", "Veuillez selectionner un état à supprimer");
         }
     }
 
@@ -203,7 +287,7 @@ public class ManagementFxmlController extends FXMLController implements Initiali
                     .build();
             userR2dbcDao.newUser(user.getUsername(), user.getPassword(), user.isEnabled()).block();
             userR2dbcDao.newAuthority(user.getUsername(), user.getAuthority()).block();
-            applicationEventPublisher.publishEvent(new UserAddedEvent(this));
+            applicationEventPublisher.publishEvent(new UserRefreshEvent(this));
         }
     }
 
