@@ -19,6 +19,11 @@
 .combo-box .list-cell:hover{
     -fx-background-color:#4F000B;
 }
+
+.combo-box .cell:selected {
+    -fx-text-fill: black;
+}
+
 #titre{
     -fx-font-family: "Brand";
 }
