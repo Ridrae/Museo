@@ -85,6 +85,7 @@ public class MainFxmlController extends FXMLController implements Initializable 
     private RadioButton urgentReturnRadio;
 
     private List<ArtworkFull> artworks = new ArrayList<>();
+    List<Collection> collectionList = new ArrayList<>();
 
     private void populateArtworkGrid(){
         Flux<ArtworkFull> flux = artworkFullR2dbcDao.findAll();
@@ -135,15 +136,7 @@ public class MainFxmlController extends FXMLController implements Initializable 
     }
 
     private void populateComboBox(){
-        Flux<Collection> fluxCollection = collectionR2dbcDao.findAll();
-        List<Collection> collectionList = new ArrayList<>();
-        fluxCollection.doOnComplete(() -> {
-            collectionBox.getItems().addAll(collectionList
-                    .stream()
-                    .map(Collection::getCollectionName)
-                    .collect(Collectors.toList()));
-            collectionBox.getItems().add(null);
-        }).subscribe(collectionList::add);
+        updateCollections();
         collectionBox.setOnAction(event -> {
             FilteredList<ArtworkFull> filteredData = new FilteredList<>(FXCollections.observableArrayList(artworks));
             filteredData.setPredicate(filterPredicate());
@@ -214,6 +207,20 @@ public class MainFxmlController extends FXMLController implements Initializable 
             artworkGrid.setItems(filteredData);
             applicationEventPublisher.publishEvent(new AlertReturnEvent(artworks));
         }).subscribe(artworks::add);
+    }
+
+    @EventListener(CollectionRefreshEvent.class)
+    public void updateCollections(){
+        collectionList.clear();
+        Flux<Collection> fluxCollection = collectionR2dbcDao.findAll();
+        fluxCollection.doOnComplete(() -> {
+            List<String> newList = collectionList
+                    .stream()
+                    .map(Collection::getCollectionName)
+                    .collect(Collectors.toList());
+            newList.add(null);
+            Platform.runLater(() -> collectionBox.setItems(new FilteredList<>(FXCollections.observableArrayList(newList))));
+        }).subscribe(collectionList::add);
     }
 
     @Override

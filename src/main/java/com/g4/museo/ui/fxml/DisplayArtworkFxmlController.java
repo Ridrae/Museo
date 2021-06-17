@@ -1,6 +1,7 @@
 package com.g4.museo.ui.fxml;
 
 import com.g4.museo.event.ArtworkRefreshedEvent;
+import com.g4.museo.event.CollectionRefreshEvent;
 import com.g4.museo.event.UserLoginEvent;
 import com.g4.museo.persistence.dto.ArtworkFull;
 import com.g4.museo.persistence.dto.ArtworkState;
@@ -12,6 +13,8 @@ import com.g4.museo.persistence.r2dbc.OwnerR2dbcDao;
 import com.g4.museo.persistence.r2dbc.StateR2dbcDao;
 import com.g4.museo.ui.utils.ErrorWindowFactory;
 import io.r2dbc.spi.Blob;
+import javafx.collections.FXCollections;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -143,6 +146,8 @@ public class DisplayArtworkFxmlController extends FXMLController implements Init
 
     private File imageFile;
 
+    List<Collection> collectionList = new ArrayList<>();
+
     @FXML
     public void onReturn(ActionEvent event){
         var scene = ((Node) event.getSource()).getScene();
@@ -215,6 +220,22 @@ public class DisplayArtworkFxmlController extends FXMLController implements Init
         restoredBox.getSelectionModel().select(artworkFull.isRestored() ? "Restauré" : "Neuf");
     }
 
+    @EventListener(CollectionRefreshEvent.class)
+    private void updateCollections(){
+        if(collectionBox!=null){
+            collectionList.clear();
+            Flux<Collection> fluxCollection = collectionR2dbcDao.findAll();
+            fluxCollection.doOnComplete(() -> {
+                List<String> newList = collectionList
+                        .stream()
+                        .map(Collection::getCollectionName)
+                        .collect(Collectors.toList());
+                newList.add(null);
+                collectionBox.setItems(new FilteredList<>(FXCollections.observableArrayList(newList)));
+            }).subscribe(collectionList::add);
+        }
+    }
+
     private void initComboBox(){
         Flux<Owner> flux = ownerR2dbcDao.findAll();
         List<Owner> ownersList = new ArrayList<>();
@@ -228,16 +249,7 @@ public class DisplayArtworkFxmlController extends FXMLController implements Init
                 ownerBox.getItems().add(owner.getOrga());
             }
         })).subscribe(ownersList::add);
-        Flux<Collection> fluxCollection = collectionR2dbcDao.findAll();
-        List<Collection> collectionList = new ArrayList<>();
-        fluxCollection.doOnComplete(() -> {
-            collectionBox.getItems().addAll(collectionList
-                    .stream()
-                    .map(Collection::getCollectionName)
-                    .collect(Collectors.toList()));
-            collectionBox.getItems().add(null);
-        }).subscribe(collectionList::add);
-
+        updateCollections();
         Flux<ArtworkState> fluxState = stateR2dbcDao.findAll();
         List<ArtworkState> stateList = new ArrayList<>();
         fluxState.doOnComplete(() -> stateBox.getItems().addAll(stateList

@@ -1,11 +1,14 @@
 package com.g4.museo.ui.fxml;
 
+import com.g4.museo.event.CollectionRefreshEvent;
 import com.g4.museo.event.UserLoginEvent;
 import com.g4.museo.persistence.dto.*;
 import com.g4.museo.persistence.r2dbc.*;
 import com.g4.museo.ui.utils.AlertWindowFactory;
 import com.g4.museo.ui.utils.ErrorWindowFactory;
 import io.r2dbc.spi.Blob;
+import javafx.collections.FXCollections;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -127,6 +130,7 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
     List<Node> toUpdate;
 
     private File imageFile;
+    List<Collection> collectionList = new ArrayList<>();
 
     @FXML
     public void onReturn(ActionEvent event){
@@ -154,6 +158,22 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
         }
     }
 
+    @EventListener(CollectionRefreshEvent.class)
+    private void updateCollections(){
+        if(collectionBox!=null){
+            collectionList.clear();
+            Flux<Collection> fluxCollection = collectionR2dbcDao.findAll();
+            fluxCollection.doOnComplete(() -> {
+                List<String> newList = collectionList
+                        .stream()
+                        .map(Collection::getCollectionName)
+                        .collect(Collectors.toList());
+                newList.add(null);
+                collectionBox.setItems(new FilteredList<>(FXCollections.observableArrayList(newList)));
+            }).subscribe(collectionList::add);
+        }
+    }
+
     private void initComboBox(){
         Flux<Owner> flux = ownerR2dbcDao.findAll();
         List<Owner> ownersList = new ArrayList<>();
@@ -167,15 +187,7 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
                 ownerBox.getItems().add(owner.getOrga());
             }
         })).subscribe(ownersList::add);
-        Flux<Collection> fluxCollection = collectionR2dbcDao.findAll();
-        List<Collection> collectionList = new ArrayList<>();
-        fluxCollection.doOnComplete(() -> {
-            collectionBox.getItems().addAll(collectionList
-                    .stream()
-                    .map(Collection::getCollectionName)
-                    .collect(Collectors.toList()));
-            collectionBox.getItems().add(null);
-        }).subscribe(collectionList::add);
+        updateCollections();
 
         Flux<ArtworkState> fluxState = stateR2dbcDao.getAllStates();
         List<ArtworkState> stateList = new ArrayList<>();
