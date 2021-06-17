@@ -1,0 +1,27 @@
+.combo-box{
+    -fx-border-color:#4F000B;
+    -fx-border-style:solid;
+    -fx-border-width:1;
+}
+.combo-box .arrow{
+    -fx-background-color:#4F000B;
+}
+.combo-box .arrow-button{
+    -fx-background-color:white;
+    -fx-border-style:none;
+}
+.combo-box .arrow-button{
+    -fx-background-color:white;
+}
+.combo-box .list-cell{
+    -fx-background-color:white;
+}
+.combo-box .list-cell:hover{
+    -fx-background-color:#4F000B;
+}
+#titre{
+    -fx-font-family: "Brand";
+}
+.Label{
+    -fx-font-family: "Brand";
+}
