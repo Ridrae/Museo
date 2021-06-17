@@ -5,6 +5,7 @@ import com.g4.museo.ui.fxml.LoginFxmlController;
 import com.g4.museo.ui.fxml.MainFxmlController;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +64,7 @@ public class MuseoApplication extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         log.info("Starting JavaFx");
+        Font.loadFont(getClass().getClassLoader().getResource("Brand.ttf").toExternalForm(), 10);
         stage = primaryStage;
         stage.setTitle("Museo Application");
         stage.setResizable(false);
