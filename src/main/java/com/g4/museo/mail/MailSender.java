@@ -27,9 +27,7 @@ public class MailSender {
 
     @EventListener(AlertReturnEvent.class)
     private void sendAlert(AlertReturnEvent event){
-        List<ArtworkFull> filteredList = ((List<ArtworkFull>)event.getSource()).stream().filter(a -> {
-            return a.getReturnDate().isBefore(LocalDate.now().plusMonths(1)) || a.getReturnDate().isEqual(LocalDate.now().plusMonths(1));
-        }).collect(Collectors.toList());
+        List<ArtworkFull> filteredList = ((List<ArtworkFull>)event.getSource()).stream().filter(a -> a.getReturnDate().isBefore(LocalDate.now().plusMonths(1)) || a.getReturnDate().isEqual(LocalDate.now().plusMonths(1))).collect(Collectors.toList());
         filteredList.forEach(a -> {
             if(!alreadySent.contains(a.getIdartwork())){
                 log.info(a.toString());

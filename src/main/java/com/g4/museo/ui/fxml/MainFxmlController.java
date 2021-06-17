@@ -85,6 +85,9 @@ public class MainFxmlController extends FXMLController implements Initializable 
     @FXML
     private RadioButton urgentReturnRadio;
 
+    @FXML
+    private ImageView refreshButton;
+
     private List<ArtworkFull> artworks = new ArrayList<>();
     List<Collection> collectionList = new ArrayList<>();
     List<ArtworkState> stateList = new ArrayList<>();
@@ -133,7 +136,6 @@ public class MainFxmlController extends FXMLController implements Initializable 
             });
             localisation.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getStoredLocation()));
             state.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getStateName()));
-            applicationEventPublisher.publishEvent(new AppReadyEvent(this));
         }).subscribe(artworks::add);
     }
 
@@ -235,6 +237,13 @@ public class MainFxmlController extends FXMLController implements Initializable 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        refreshButton.setOnMouseClicked((event)->{
+            applicationEventPublisher.publishEvent(new ArtworkRefreshedEvent(this));
+            applicationEventPublisher.publishEvent(new CollectionRefreshEvent(this));
+            applicationEventPublisher.publishEvent(new OwnerRefreshEvent(this));
+            applicationEventPublisher.publishEvent(new StateRefreshEvent(this));
+            applicationEventPublisher.publishEvent(new UserRefreshEvent(this));
+        });
         updateRoles();
         populateArtworkGrid();
         populateComboBox();

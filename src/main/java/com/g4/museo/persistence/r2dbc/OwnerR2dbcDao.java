@@ -11,10 +11,6 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public interface OwnerR2dbcDao extends R2dbcRepository<Owner, Integer> {
-    @Cacheable("owners")
-    @Query("SELECT * FROM owner")
-    Flux<Owner> findAllOwners();
-
     @Query("SELECT idowner FROM owner WHERE organisation = :orgaName")
     Mono<Integer> findOwnerIdByOrga(@Param("orgaName") String name);
 

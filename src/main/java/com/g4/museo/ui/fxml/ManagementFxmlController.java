@@ -158,12 +158,13 @@ public class ManagementFxmlController extends FXMLController implements Initiali
 
     @EventListener(UserRefreshEvent.class)
     private void updateUser(){
-        users.clear();
-        Flux<User> userFlux = userR2dbcDao.findAll();
-        userFlux.doOnComplete(() -> {
-            userGrid.setItems(new FilteredList<>(FXCollections.observableArrayList(users)));
-        }).subscribe(users::add);
-
+        if (userGrid!=null){
+            users.clear();
+            Flux<User> userFlux = userR2dbcDao.findAll();
+            userFlux.doOnComplete(() -> {
+                userGrid.setItems(new FilteredList<>(FXCollections.observableArrayList(users)));
+            }).subscribe(users::add);
+        }
     }
 
     @FXML

@@ -1,6 +1,5 @@
 package com.g4.museo;
 
-import com.g4.museo.event.AppReadyEvent;
 import com.g4.museo.ui.fxml.LoginFxmlController;
 import com.g4.museo.ui.fxml.MainFxmlController;
 import javafx.application.Application;
@@ -16,7 +15,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ApplicationEventMulticaster;
-import org.springframework.context.event.EventListener;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -38,20 +36,9 @@ public class MuseoApplication extends Application {
 
     private ConfigurableApplicationContext applicationContext;
 
-    private static boolean appReady = false;
-
     public static Stage stage;
 
     public static Stage loginStage;
-
-    public static boolean isApplicationReady(){
-        return appReady;
-    }
-
-    @EventListener(AppReadyEvent.class)
-    private void setAppReady(){
-        appReady = true;
-    }
 
     @Override
     public void init() throws Exception {

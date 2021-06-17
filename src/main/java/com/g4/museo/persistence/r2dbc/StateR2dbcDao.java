@@ -11,10 +11,6 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public interface StateR2dbcDao extends R2dbcRepository<ArtworkState, Integer> {
-    @Cacheable("states")
-    @Override
-    Flux<ArtworkState> findAll();
-
     @Query("SELECT idstate FROM artwork_state WHERE state_name = :stateName")
     Mono<Integer> findStateIdByName(@Param("stateName") String name);
 }

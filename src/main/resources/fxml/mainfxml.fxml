@@ -65,7 +65,7 @@
                            <font>
                               <Font name="Open Sans Bold" size="12.0" />
                            </font></Button>
-                        <ImageView fitHeight="42.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true" style="-fx-translate-x: 10px;">
+                        <ImageView fx:id="refreshButton" fitHeight="42.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true" style="-fx-translate-x: 10px;">
                            <image>
                               <Image url="@../images/refresh.png" />
                            </image>
