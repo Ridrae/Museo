@@ -1,6 +1,8 @@
 package com.g4.museo.ui.fxml;
 
 import com.g4.museo.event.CollectionRefreshEvent;
+import com.g4.museo.event.OwnerRefreshEvent;
+import com.g4.museo.event.StateRefreshEvent;
 import com.g4.museo.event.UserLoginEvent;
 import com.g4.museo.persistence.dto.*;
 import com.g4.museo.persistence.r2dbc.*;
@@ -131,6 +133,8 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
 
     private File imageFile;
     List<Collection> collectionList = new ArrayList<>();
+    List<ArtworkState> stateList = new ArrayList<>();
+    List<Owner> ownersList = new ArrayList<>();
 
     @FXML
     public void onReturn(ActionEvent event){
@@ -174,27 +178,45 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
         }
     }
 
-    private void initComboBox(){
-        Flux<Owner> flux = ownerR2dbcDao.findAll();
-        List<Owner> ownersList = new ArrayList<>();
-        flux.doOnComplete(() -> ownersList.forEach(owner -> {
-            if(owner.getFirstname() != null && owner.getLastname() != null){
-                var fullname = new StringBuilder(owner.getFirstname());
-                fullname.append(" ");
-                fullname.append(owner.getLastname());
-                ownerBox.getItems().add(fullname.toString());
-            } else if(owner.getOrga() != null) {
-                ownerBox.getItems().add(owner.getOrga());
-            }
-        })).subscribe(ownersList::add);
-        updateCollections();
+    @EventListener(StateRefreshEvent.class)
+    private void updateState(){
+        if(stateBox!=null){
+            stateList.clear();
+            Flux<ArtworkState> fluxCollection = stateR2dbcDao.findAll();
+            fluxCollection.doOnComplete(() -> {
+                List<String> newList = stateList
+                        .stream()
+                        .map(ArtworkState::getStateName)
+                        .collect(Collectors.toList());
+                newList.add(null);
+                stateBox.setItems(new FilteredList<>(FXCollections.observableArrayList(newList)));
+            }).subscribe(stateList::add);
+        }
+    }
 
-        Flux<ArtworkState> fluxState = stateR2dbcDao.getAllStates();
-        List<ArtworkState> stateList = new ArrayList<>();
-        fluxState.doOnComplete(() -> stateBox.getItems().addAll(stateList
-                .stream()
-                .map(ArtworkState::getStateName)
-                .collect(Collectors.toList()))).subscribe(stateList::add);
+    @EventListener(OwnerRefreshEvent.class)
+    private void updateOwner(){
+        if(ownerBox!=null){
+            ownersList.clear();
+            ownerBox.getItems().clear();
+            Flux<Owner> flux = ownerR2dbcDao.findAll();
+            flux.doOnComplete(() -> ownersList.forEach(owner -> {
+                if(owner.getFirstname() != null && owner.getLastname() != null){
+                    var fullname = new StringBuilder(owner.getFirstname());
+                    fullname.append(" ");
+                    fullname.append(owner.getLastname());
+                    ownerBox.getItems().add(fullname.toString());
+                } else if(owner.getOrganisation() != null) {
+                    ownerBox.getItems().add(owner.getOrganisation());
+                }
+            })).subscribe(ownersList::add);
+        }
+    }
+
+    private void initComboBox(){
+        updateOwner();
+        updateCollections();
+        updateState();
 
         restoredBox.getItems().addAll(Arrays.asList("Neuf", "Restauré"));
     }

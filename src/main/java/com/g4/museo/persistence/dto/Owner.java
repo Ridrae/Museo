@@ -15,6 +15,6 @@ public class Owner {
     private int ownerID;
     private String firstname;
     private String lastname;
-    private String orga;
+    private String organisation;
     private String adress;
 }

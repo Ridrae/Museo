@@ -22,6 +22,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.EventListener;
@@ -86,6 +87,7 @@ public class MainFxmlController extends FXMLController implements Initializable 
 
     private List<ArtworkFull> artworks = new ArrayList<>();
     List<Collection> collectionList = new ArrayList<>();
+    List<ArtworkState> stateList = new ArrayList<>();
 
     private void populateArtworkGrid(){
         Flux<ArtworkFull> flux = artworkFullR2dbcDao.findAll();
@@ -142,13 +144,7 @@ public class MainFxmlController extends FXMLController implements Initializable 
             filteredData.setPredicate(filterPredicate());
             artworkGrid.setItems(filteredData);
         });
-        Flux<ArtworkState> fluxState = stateR2dbcDao.getAllStates();
-        List<ArtworkState> stateList = new ArrayList<>();
-        fluxState.doOnComplete(() -> stateBox.getItems().addAll(stateList
-                .stream()
-                .map(ArtworkState::getStateName)
-                .collect(Collectors.toList()))).subscribe(stateList::add);
-        stateBox.getItems().add(null);
+        updateState();
         stateBox.setOnAction(event -> {
             FilteredList<ArtworkFull> filteredData = new FilteredList<>(FXCollections.observableArrayList(artworks));
             filteredData.setPredicate(filterPredicate());
@@ -223,6 +219,20 @@ public class MainFxmlController extends FXMLController implements Initializable 
         }).subscribe(collectionList::add);
     }
 
+    @EventListener(StateRefreshEvent.class)
+    public void updateState(){
+        stateList.clear();
+        Flux<ArtworkState> fluxState = stateR2dbcDao.findAll();
+        fluxState.doOnComplete(() -> {
+            List<String> newList = stateList
+                    .stream()
+                    .map(ArtworkState::getStateName)
+                    .collect(Collectors.toList());
+            newList.add(null);
+            Platform.runLater(() -> stateBox.setItems(new FilteredList<>(FXCollections.observableArrayList(newList))));
+        }).subscribe(stateList::add);
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         updateRoles();
@@ -252,7 +262,7 @@ public class MainFxmlController extends FXMLController implements Initializable 
                 returnValue = returnValue && (o.getReturnDate().isBefore(LocalDate.now().plusMonths(1)) || o.getReturnDate().isEqual(LocalDate.now().plusMonths(1)));
             }
             if(urgentReturnRadio.isSelected()){
-                returnValue = returnValue && (o.getReturnDate().isAfter(LocalDate.now()));
+                returnValue = returnValue && (o.getReturnDate().isBefore(LocalDate.now()) || o.getReturnDate().isEqual(LocalDate.now()));
             }
             if (collectionBox.getValue()!=null){
                 Boolean res;

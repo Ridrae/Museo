@@ -11,7 +11,7 @@ public class OwnerReadingConverter implements Converter<Row, Owner> {
                 .ownerID(source.get("idowner", Integer.class))
                 .firstname(source.get("firstname", String.class))
                 .lastname(source.get("lastname", String.class))
-                .orga(source.get("organisation", String.class))
+                .organisation(source.get("organisation", String.class))
                 .adress(source.get("adress", String.class))
                 .build();
     }
