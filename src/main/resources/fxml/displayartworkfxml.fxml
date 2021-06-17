@@ -34,7 +34,7 @@
                      <children>
                         <Label alignment="CENTER" contentDisplay="CENTER" layoutX="7.0" layoutY="1.0" prefHeight="22.0" prefWidth="52.0" text="Artiste" textFill="WHITE">
                            <font>
-                              <Font size="16.0" />
+                              <Font name="Open Sans Bold" size="14.0" />
                            </font>
                         </Label>
                      </children>
@@ -43,28 +43,50 @@
                   <DatePicker layoutX="142.0" layoutY="64.0" prefHeight="25.0" prefWidth="149.0" showWeekNumbers="true" style="-fx-border-color: #720026#720026;" />
                   <DatePicker layoutX="122.0" layoutY="106.0" prefHeight="28.0" prefWidth="169.0" style="-fx-border-color: #720026#720026;" />
                   <TextField layoutX="132.0" layoutY="148.0" prefHeight="28.0" prefWidth="159.0" style="-fx-border-color: #720026#720026; -fx-background-radius: 2px;" text="Dépot" />
-                  <CheckBox layoutX="13.0" layoutY="192.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="221.0" text="Certification">
+                  <CheckBox layoutX="120.0" layoutY="190.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="32.0">
                      <font>
                         <Font size="15.0" />
                      </font>
                   </CheckBox>
-                  <ComboBox layoutX="371.0" layoutY="26.0" prefWidth="150.0" promptText="Propriétaire" style="-fx-background-color: #CE4257#CE4257;" stylesheets="@style_display_artwork.css" />
-                  <ComboBox layoutX="372.0" layoutY="156.0" prefWidth="150.0" promptText="Collection" style="-fx-background-color: #CE4257#CE4257;" stylesheets="@style_display_artwork.css" />
+                  <ComboBox layoutX="394.0" layoutY="51.0" prefWidth="150.0" promptText="Propriétaire" style="-fx-background-color: #CE4257#CE4257;" stylesheets="@style_display_artwork.css" />
+                  <ComboBox layoutX="394.0" layoutY="161.0" prefWidth="150.0" promptText="Collection" style="-fx-background-color: #CE4257#CE4257;" stylesheets="@style_display_artwork.css" />
                   <Label alignment="CENTER" contentDisplay="CENTER" layoutX="19.0" layoutY="64.0" prefHeight="25.0" prefWidth="116.0" text="Date de création" textFill="WHITE">
                      <font>
-                        <Font size="15.0" />
+                        <Font name="Open Sans Bold" size="14.0" />
                      </font>
                   </Label>
                   <Label alignment="CENTER" contentDisplay="CENTER" layoutX="24.0" layoutY="107.0" prefHeight="25.0" prefWidth="88.0" text="Date de prêt" textFill="WHITE">
                      <font>
-                        <Font size="15.0" />
+                        <Font name="Open Sans Bold" size="14.0" />
                      </font>
                   </Label>
                   <Label alignment="CENTER" contentDisplay="CENTER" layoutX="27.0" layoutY="148.0" prefHeight="25.0" prefWidth="88.0" text="Localisation" textFill="WHITE">
                      <font>
-                        <Font size="15.0" />
+                        <Font name="Open Sans Bold" size="14.0" />
                      </font>
                   </Label>
+                  <CheckBox fx:id="storedBox" layoutX="270.0" layoutY="191.0" mnemonicParsing="false" prefHeight="25.0">
+                     <font>
+                        <Font size="15.0" />
+                     </font></CheckBox>
+                  <AnchorPane layoutX="176.0" layoutY="190.0" prefHeight="28.0" prefWidth="66.0" style="-fx-background-color: #720026#720026; -fx-border-radius: 2px;">
+                     <children>
+                        <Label alignment="CENTER" contentDisplay="CENTER" layoutX="4.0" layoutY="2.0" prefHeight="25.0" prefWidth="77.0" text="Stockage" textFill="WHITE">
+                           <font>
+                              <Font name="Open Sans Bold" size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane layoutX="12.0" layoutY="188.0" prefHeight="28.0" prefWidth="66.0" style="-fx-background-color: #720026#720026; -fx-border-radius: 2px;">
+                     <children>
+                        <Label alignment="CENTER" contentDisplay="CENTER" layoutX="4.0" layoutY="2.0" prefHeight="25.0" prefWidth="96.0" text="Certification" textFill="WHITE">
+                           <font>
+                              <Font name="Open Sans Bold" size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
                </children>
             </AnchorPane>
             <AnchorPane layoutX="655.0" layoutY="395.0" prefHeight="258.0" prefWidth="611.0">
@@ -73,62 +95,62 @@
                      <children>
                         <Label alignment="CENTER" contentDisplay="CENTER" layoutX="21.0" layoutY="3.0" prefHeight="25.0" prefWidth="79.0" text="Technique" textFill="WHITE">
                            <font>
-                              <Font size="16.0" />
+                              <Font name="Open Sans Bold" size="14.0" />
                            </font>
                         </Label>
                      </children>
                   </AnchorPane>
                   <AnchorPane layoutX="44.0" layoutY="147.0" prefHeight="28.0" prefWidth="116.0" style="-fx-background-color: #720026#720026; -fx-border-radius: 2px;" />
-                  <AnchorPane layoutX="43.0" layoutY="103.0" prefHeight="28.0" prefWidth="165.0" style="-fx-background-color: #720026#720026; -fx-border-radius: 2px;" />
+                  <AnchorPane layoutX="43.0" layoutY="103.0" prefHeight="28.0" prefWidth="141.0" style="-fx-background-color: #720026#720026; -fx-border-radius: 2px;" />
                   <AnchorPane layoutX="42.0" layoutY="61.0" prefHeight="28.0" prefWidth="119.0" style="-fx-background-color: #720026#720026; -fx-border-radius: 2px;" />
                   <AnchorPane layoutX="41.0" layoutY="18.0" prefHeight="28.0" prefWidth="120.0" style="-fx-background-color: #720026#720026; -fx-border-radius: 2px;" />
                   <TextField layoutX="163.0" layoutY="18.0" style="-fx-border-color: #720026#720026 #720026#720026;" text="3,49 m x 7,77 m" />
                   <TextField layoutX="163.0" layoutY="61.0" style="-fx-border-color: #720026#720026 #720026#720026;" text="22,50 m² " />
-                  <TextField layoutX="210.0" layoutY="103.0" prefHeight="28.0" prefWidth="115.0" style="-fx-border-color: #720026#720026 #720026#720026;" text="10 000 000 €" />
-                  <TextField layoutX="163.0" layoutY="147.0" style="-fx-border-color: #720026#720026 #720026#720026;" text="Toile" />
-                  <TextField layoutX="164.0" layoutY="192.0" prefHeight="28.0" prefWidth="161.0" style="-fx-border-color: #720026#720026 #720026#720026;" text="Huile sur toile" />
-                  <ComboBox layoutX="420.0" layoutY="18.0" prefWidth="150.0" promptText="Type d'oeuvre" style="-fx-background-color: #CE4257#CE4257;" stylesheets="@style_display_artwork.css" />
-                  <ComboBox layoutX="420.0" layoutY="192.0" prefWidth="150.0" promptText="Etat de l'oeuvre" style="-fx-background-color: #CE4257#CE4257;" stylesheets="@style_display_artwork.css" />
+                  <TextField layoutX="186.0" layoutY="103.0" prefHeight="28.0" prefWidth="127.0" style="-fx-border-color: #720026#720026 #720026#720026;" text="10 000 000 €" />
+                  <TextField layoutX="163.0" layoutY="147.0" prefHeight="27.0" prefWidth="151.0" style="-fx-border-color: #720026#720026 #720026#720026;" text="Toile" />
+                  <TextField layoutX="164.0" layoutY="192.0" prefHeight="28.0" prefWidth="151.0" style="-fx-border-color: #720026#720026 #720026#720026;" text="Huile sur toile" />
+                  <ComboBox layoutX="420.0" layoutY="50.0" prefWidth="150.0" promptText="Type d'oeuvre" style="-fx-background-color: #CE4257#CE4257;" stylesheets="@style_display_artwork.css" />
+                  <ComboBox layoutX="420.0" layoutY="160.0" prefWidth="150.0" promptText="Etat de l'oeuvre" style="-fx-background-color: #CE4257#CE4257;" stylesheets="@style_display_artwork.css" />
                   <Label alignment="CENTER" contentDisplay="CENTER" layoutX="57.0" layoutY="19.0" prefHeight="25.0" prefWidth="88.0" text="Taille (H x L)" textFill="WHITE">
                      <font>
-                        <Font size="16.0" />
+                        <Font name="Open Sans Bold" size="14.0" />
                      </font>
                   </Label>
                   <Label alignment="CENTER" contentDisplay="CENTER" layoutX="66.0" layoutY="62.0" prefHeight="25.0" prefWidth="79.0" text="Périmètre" textFill="WHITE">
                      <font>
-                        <Font size="16.0" />
+                        <Font name="Open Sans Bold" size="14.0" />
                      </font>
                   </Label>
-                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="55.0" layoutY="104.0" prefHeight="25.0" prefWidth="142.0" text="Valeur assurance" textFill="WHITE">
+                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="46.0" layoutY="104.0" prefHeight="25.0" prefWidth="131.0" text="Valeur assurance" textFill="WHITE">
                      <font>
-                        <Font size="16.0" />
+                        <Font name="Open Sans Bold" size="14.0" />
                      </font>
                   </Label>
                   <Label alignment="CENTER" contentDisplay="CENTER" layoutX="69.0" layoutY="147.0" prefHeight="25.0" prefWidth="67.0" text="Matériel" textFill="WHITE">
                      <font>
-                        <Font size="16.0" />
+                        <Font name="Open Sans Bold" size="14.0" />
                      </font>
                   </Label>
                </children></AnchorPane>
             <Label layoutX="26.0" layoutY="360.0" text="Description :" underline="true">
                <font>
-                  <Font size="21.0" />
+                  <Font name="Open Sans Bold" size="21.0" />
                </font>
             </Label>
             <Label layoutX="694.0" layoutY="360.0" text="Fiche technique :" underline="true">
                <font>
-                  <Font size="21.0" />
+                  <Font name="Open Sans Bold" size="21.0" />
                </font>
             </Label>
             <TextArea editable="false" layoutX="691.0" layoutY="79.0" prefHeight="253.0" prefWidth="560.0" style="-fx-border-color: black;" text="Guernica est une des œuvres les plus célèbres du peintre espagnol Pablo Picasso, et un des tableaux les plus connus au monde." wrapText="true" />
-            <Label layoutX="902.0" layoutY="46.0" text="Texte descriptif :" underline="true">
+            <Label layoutX="902.0" layoutY="45.0" text="Texte descriptif :">
                <font>
-                  <Font size="21.0" />
+                  <Font name="Open Sans Bold" size="24.0" />
                </font>
             </Label>
             <Button layoutX="594.0" layoutY="675.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="96.0" style="-fx-background-color: #720026#720026;" text="Modifier" textFill="WHITE">
                <font>
-                  <Font name="Open Sans Regular" size="17.0" />
+                  <Font name="Open Sans Bold" size="14.0" />
                </font>
             </Button>
             <Line endX="99.99993896484375" endY="122.08468627929688" layoutX="537.0" layoutY="282.0" startX="99.99993896484375" startY="356.89666748046875" stroke="#720026" />
@@ -136,7 +158,7 @@
                <children>
                   <Label alignment="CENTER" contentDisplay="CENTER" layoutY="6.0" prefHeight="25.0" prefWidth="131.0" text="Titre de l'oeuvre" textFill="WHITE">
                      <font>
-                        <Font size="15.0" />
+                        <Font name="Open Sans Bold" size="14.0" />
                      </font>
                   </Label>
                </children>
