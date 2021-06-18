@@ -12,7 +12,7 @@ import org.springframework.data.annotation.Id;
 @ToString
 public class Owner {
     @Id
-    private int ownerID;
+    private int idowner;
     private String firstname;
     private String lastname;
     private String organisation;

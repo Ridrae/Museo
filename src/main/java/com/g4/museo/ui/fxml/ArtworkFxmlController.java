@@ -227,7 +227,7 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
         try {
             stage = (Stage) this.getView().getScene().getWindow();
             var fileChooser = new FileChooser();
-            fileChooser.setTitle("Select an image");
+            fileChooser.setTitle("Selectionnez une image");
             fileChooser.getExtensionFilters().addAll(
                     new FileChooser.ExtensionFilter("All Images", "*.*"),
                     new FileChooser.ExtensionFilter("JPG, JPEG", "*.jpg", "*.jpeg"),
@@ -250,13 +250,13 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
     public void addArtwork(){
         var artworkFullDTO = ArtworkFull.builder().build();
         if(nameField.getText().equals("")){
-            AlertWindowFactory.create("Missing infos", "Please select a name");
+            AlertWindowFactory.create("Champs Requis", "Entrez un nom");
             return;
         } else {
             artworkFullDTO.setName(nameField.getText());
         }
         if(authorField.getText().equals("")){
-            AlertWindowFactory.create("Missing infos", "Please select an author");
+            AlertWindowFactory.create("Champs Requis", "Entrez un auteur");
             return;
         } else {
             artworkFullDTO.setAuthor(authorField.getText());
@@ -270,24 +270,24 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
                 ErrorWindowFactory.create(e);
             }
         } else {
-            AlertWindowFactory.create("Missing infos", "Please select a picture");
+            AlertWindowFactory.create("Champs Requis", "Ajoutez une image");
             return;
         }
         if(dateField.getValue()!=null){
             artworkFullDTO.setDate(dateField.getValue());
         } else {
-            AlertWindowFactory.create("Missing infos", "Please select a creation date");
+            AlertWindowFactory.create("Champs Requis", "Selectionnez une date de création");
             return;
         }
         artworkFullDTO.setCertified(certificateBox.isSelected());
         if(stateBox.getValue()!=null){
             artworkFullDTO.setStateID(stateR2dbcDao.findStateIdByName(stateBox.getValue()).block());
         } else {
-            AlertWindowFactory.create("Missing infos", "Please select a status");
+            AlertWindowFactory.create("Champs Requis", "Selectionnez un état");
             return;
         }
-        if(stateField.getText().equals("") && stateBox.getValue().equals("museum")){
-            AlertWindowFactory.create("Missing infos", "Please select a location");
+        if(stateField.getText().equals("") && stateBox.getValue().equals("Musée")){
+            AlertWindowFactory.create("Champs Requis", "Entrez un emplacement");
             return;
         } else {
             artworkFullDTO.setStoredLocation(stateField.getText());
@@ -296,29 +296,29 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
             artworkFullDTO.setCollectionID(collectionR2dbcDao.findCollectionIdByName(collectionBox.getValue()).block());
         }
         if(ownerBox.getValue() == null){
-            AlertWindowFactory.create("Missing infos", "Please select an owner");
+            AlertWindowFactory.create("Champs Requis", "Selectionnez un propriétaire");
             return;
         } else artworkFullDTO.setBorrowed(!ownerBox.getValue().equals("Museo"));
         if(descField.getText().equals("")){
-            AlertWindowFactory.create("Missing infos", "Please write a description");
+            AlertWindowFactory.create("Champs Requis", "Entrez une description");
             return;
         } else {
             artworkFullDTO.setDesc(descField.getText());
         }
         if (widthField.getText().equals("")){
-            AlertWindowFactory.create("Missing infos", "Please specify a width");
+            AlertWindowFactory.create("Champs Requis", "Entrez une largeur");
             return;
         }else{
             artworkFullDTO.setWidth(widthField.getText());
         }
         if(heigthField.getText().equals("")){
-            AlertWindowFactory.create("Missing infos", "Please specify a heigth");
+            AlertWindowFactory.create("Champs Requis", "Entrez une hauteur");
             return;
         }else{
             artworkFullDTO.setHeight(heigthField.getText());
         }
         if(perimeterField.getText().equals("")){
-            AlertWindowFactory.create("Missing infos", "Please specify a perimter");
+            AlertWindowFactory.create("Champs Requis", "Entrez un périmètre");
             return;
         }else{
             artworkFullDTO.setPerimeter(perimeterField.getText());
@@ -329,19 +329,19 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
         artworkFullDTO.setTechnic(technicField.getText());
 
         if(typeField.getText().equals("")){
-            AlertWindowFactory.create("Missing infos", "Please specify a type");
+            AlertWindowFactory.create("Champs Requis", "Entrez un type");
             return;
         } else {
             artworkFullDTO.setType(typeField.getText());
         }
         if(restoredBox.getValue() == null){
-            AlertWindowFactory.create("Missing infos", "Please select a status");
+            AlertWindowFactory.create("Champs Requis", "Entrez un état");
             return;
         } else artworkFullDTO.setRestored(!restoredBox.getValue().equals("Neuf"));
 
         if(artworkFullDTO.isBorrowed()) {
             if (ownerBox.getValue() == null) {
-                AlertWindowFactory.create("Missing infos", "Please select an owner");
+                AlertWindowFactory.create("Champs Requis", "Selectionnez un propriétaire");
                 return;
             } else {
                 String firstname = ownerBox.getValue().split(" ")[0];
@@ -349,7 +349,7 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
                 artworkFullDTO.setIdowner(ownerR2dbcDao.findOwnerIdByName(firstname, lastname).block());
             }
             if(borrowField.getValue() == null) {
-                AlertWindowFactory.create("Missing infos", "Please enter a borrow date");
+                AlertWindowFactory.create("Champs Requis", "Entrez une date d'emprunt");
                 return;
             } else {
                 artworkFullDTO.setDateBorrowed(borrowField.getValue());

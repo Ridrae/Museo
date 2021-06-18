@@ -17,8 +17,8 @@ public class ErrorWindowFactory {
 
     public static void create(Exception ex){
         var alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Exception Occured");
-        alert.setHeaderText("A critical Exception has occured");
+        alert.setTitle("Erreur");
+        alert.setHeaderText("Une erreur critique est survenue");
         alert.setContentText(ex.getMessage());
 
         var sw = new StringWriter();
@@ -26,7 +26,7 @@ public class ErrorWindowFactory {
         ex.printStackTrace(pw);
         var exceptionText = sw.toString();
 
-        var label = new Label("The exception stacktrace was:");
+        var label = new Label("Le code d'erreur est:");
         var textArea = new TextArea(exceptionText);
         textArea.setEditable(false);
         textArea.setWrapText(true);

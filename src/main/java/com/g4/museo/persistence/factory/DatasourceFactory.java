@@ -59,7 +59,7 @@ public class DatasourceFactory extends AbstractR2dbcConfiguration {
     public ConnectionFactory connectionFactory() {
         ConnectionFactoryOptions options = ConnectionFactoryOptions.builder()
                 .option(ConnectionFactoryOptions.DRIVER, "mysql")
-                .option(ConnectionFactoryOptions.HOST, "127.0.0.1")
+                .option(ConnectionFactoryOptions.HOST, "192.168.119.189")
                 .option(ConnectionFactoryOptions.PORT, 3306)
                 .option(ConnectionFactoryOptions.DATABASE, "museo")
                 .option(ConnectionFactoryOptions.USER, "dev")

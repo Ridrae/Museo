@@ -5,13 +5,12 @@ import com.g4.museo.event.OwnerRefreshEvent;
 import com.g4.museo.event.StateRefreshEvent;
 import com.g4.museo.event.UserRefreshEvent;
 import com.g4.museo.persistence.dto.*;
+import com.g4.museo.persistence.dto.Collection;
 import com.g4.museo.persistence.r2dbc.CollectionR2dbcDao;
 import com.g4.museo.persistence.r2dbc.OwnerR2dbcDao;
 import com.g4.museo.persistence.r2dbc.StateR2dbcDao;
 import com.g4.museo.persistence.r2dbc.UserR2dbcDao;
-import com.g4.museo.ui.utils.AlertWindowFactory;
-import com.g4.museo.ui.utils.ConfirmWindowFactory;
-import com.g4.museo.ui.utils.EditWindowFactory;
+import com.g4.museo.ui.utils.*;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -32,10 +31,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -185,7 +181,7 @@ public class ManagementFxmlController extends FXMLController implements Initiali
     private void deleteCollection(){
         try {
             Collection collection = collectionGrid.getSelectionModel().getSelectedItem();
-            if (ConfirmWindowFactory.create("Confirmer la suppression", "Voulez-vous supprimer la collection " + collection.getCollectionName() + " ?").get().getText().equals("Confirm")){
+            if (ConfirmWindowFactory.create("Confirmer la suppression", "Voulez-vous supprimer la collection " + collection.getCollectionName() + " ?").get().getText().equals("Confirmer")){
                 collectionR2dbcDao.delete(collection).block();
                 collectionGrid.getItems().remove(collection);
                 applicationEventPublisher.publishEvent(new CollectionRefreshEvent(this));
@@ -217,7 +213,7 @@ public class ManagementFxmlController extends FXMLController implements Initiali
         try {
             User user = userGrid.getSelectionModel().getSelectedItem();
             if (!user.getAuthority().equals("USER_ADMIN")) {
-                if (ConfirmWindowFactory.create("Confirmer la suppression", "Voulez-vous supprimer l'utilisateur " + user.getUsername() + " ?").get().getText().equals("Confirm")){
+                if (ConfirmWindowFactory.create("Confirmer la suppression", "Voulez-vous supprimer l'utilisateur " + user.getUsername() + " ?").get().getText().equals("Confirmer")){
                     userGrid.getItems().remove(user);
                     userR2dbcDao.deleteAuthorities(user.getUsername()).block();
                     userR2dbcDao.deleteUser(user.getUsername()).block();
@@ -236,9 +232,12 @@ public class ManagementFxmlController extends FXMLController implements Initiali
             if (SecurityContextHolder.getContext().getAuthentication().getName().equals(user.getUsername())){
                 AlertWindowFactory.create("Utilisateur incorrect", "Vous ne pouvez pas modifier l'utilisateur actuellement connecté");
             } else {
-                Optional<String> result =  EditWindowFactory.create("Edition de l'utilisateur: " + user.getUsername(), "Entrez un nouveau nom: ");
+                Optional<Map<String, String>> result = UserEditWindowFactory.create("Edition de l'utilisateur: " + user.getUsername());
                 if (result.isPresent()){
-                    userR2dbcDao.updateUser(user.getUsername(), result.get()).block();
+                    if (!result.get().get("password").equals("")){
+                        user.setPassword(passwordEncoder.encode(result.get().get("password")));
+                    }
+                    userR2dbcDao.updateUser(user.getUsername(), result.get().get("username"), user.getPassword()).block();
                     applicationEventPublisher.publishEvent(new UserRefreshEvent(this));
                 }
             }
@@ -248,10 +247,52 @@ public class ManagementFxmlController extends FXMLController implements Initiali
     }
 
     @FXML
+    private void deleteOwner(){
+        try {
+            Owner owner = ownerGrid.getSelectionModel().getSelectedItem();
+            if(ConfirmWindowFactory.create("Confirmer la suppression", "Voulez-vous supprimer le propriétaire ?").get().getText().equals("Confirmer")){
+                ownerR2dbcDao.delete(owner).block();
+                ownerGrid.getItems().remove(owner);
+                applicationEventPublisher.publishEvent(new OwnerRefreshEvent(this));
+            }
+        } catch (NullPointerException e){
+            AlertWindowFactory.create("Selectionnez un propriétaire", "Veuillez selectionner un propriétaire à modifier");
+        }
+    }
+
+    @FXML
+    private void editOwner(){
+        try{
+            Owner owner = ownerGrid.getSelectionModel().getSelectedItem();
+            Optional<Map<String, String>> result = OwnerEditWindowFactory.create("Edition du propriétaire");
+            if(result.isPresent()){
+                ownerGrid.getItems().remove(owner);
+                if(!result.get().get("firstname").equals("")){
+                    owner.setFirstname(result.get().get("firstname"));
+                }
+                if(!result.get().get("lastname").equals("")){
+                    owner.setLastname(result.get().get("lastname"));
+                }
+                if(!result.get().get("orga").equals("")){
+                    owner.setOrganisation(result.get().get("orga"));
+                }
+                if(!result.get().get("address").equals("")){
+                    owner.setAdress(result.get().get("address"));
+                }
+                ownerR2dbcDao.save(owner).block();
+                ownerGrid.getItems().add(owner);
+                applicationEventPublisher.publishEvent(new OwnerRefreshEvent(this));
+            }
+        } catch (NullPointerException e){
+            AlertWindowFactory.create("Selectionnez un propriétaire", "Veuillez selectionner un propriétaire à modifier");
+        }
+    }
+
+    @FXML
     private void deleteState(){
         try{
             ArtworkState state = stateGrid.getSelectionModel().getSelectedItem();
-            if(ConfirmWindowFactory.create("Confirmer la suppression", "Voulez-vous supprimer l'état " + state.getStateName() + " ?").get().getText().equals("Confirm")){
+            if(ConfirmWindowFactory.create("Confirmer la suppression", "Voulez-vous supprimer l'état " + state.getStateName() + " ?").get().getText().equals("Confirmer")){
                 stateR2dbcDao.delete(state).block();
                 stateGrid.getItems().remove(state);
                 applicationEventPublisher.publishEvent(new StateRefreshEvent(this));
@@ -272,6 +313,23 @@ public class ManagementFxmlController extends FXMLController implements Initiali
             Mono<ArtworkState> newState = stateR2dbcDao.save(state);
             stateGrid.getItems().add(newState.block());
             applicationEventPublisher.publishEvent(new StateRefreshEvent(this));
+        }
+    }
+
+    @FXML
+    private void editState(){
+        try{
+            ArtworkState state = stateGrid.getSelectionModel().getSelectedItem();
+            Optional<String> result =  EditWindowFactory.create("Edition de l'état: " + state.getStateName(), "Entrez un nouveau nom: ");
+            if(result.isPresent()){
+                stateGrid.getItems().remove(state);
+                state.setStateName(result.get());
+                stateR2dbcDao.save(state).block();
+                stateGrid.getItems().add(state);
+                applicationEventPublisher.publishEvent(new StateRefreshEvent(this));
+            }
+        } catch (NullPointerException e){
+            AlertWindowFactory.create("Selectionnez un état", "Veuillez selectionner un état à modifier");
         }
     }
     

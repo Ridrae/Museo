@@ -57,7 +57,7 @@ public class LoginFxmlController extends FXMLController implements Initializable
             Authentication request = new UsernamePasswordAuthenticationToken(userName, userPassword);
             Authentication result = authManager.authenticate(request);
             SecurityContextHolder.getContext().setAuthentication(result);
-            AlertWindowFactory.create("Successful Login","Successfully logged in as " + SecurityContextHolder.getContext().getAuthentication().getName());
+            AlertWindowFactory.create("Connexion réussie","Connecté avec succès en tant que " + SecurityContextHolder.getContext().getAuthentication().getName());
             applicationEventPublisher.publishEvent(new UserLoginEvent(this));
             ((Stage)this.getView().getScene().getWindow()).close();
         } catch (AuthenticationException | IOException e) {

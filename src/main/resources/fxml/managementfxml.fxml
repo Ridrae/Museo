@@ -59,11 +59,11 @@
             <Button onAction="#addState" layoutX="1017.0" layoutY="796.0" mnemonicParsing="false" style="-fx-background-color: #720026; -fx-text-fill: white;" text="Ajouter l'état" />
             <Button onAction="#editCollection" layoutX="407.0" layoutY="20.0" mnemonicParsing="false" style="-fx-background-color: #FFA382; -fx-text-fill: white;" text="Modifier" />
             <Button onAction="#deleteCollection" layoutX="475.0" layoutY="20.0" mnemonicParsing="false" style="-fx-background-color: #CE4257; -fx-text-fill: white;" text="Supprimer" />
-            <Button layoutX="1084.0" layoutY="20.0" mnemonicParsing="false" style="-fx-background-color: #FFA382; -fx-text-fill: white;" text="Modifier" />
-            <Button layoutX="1152.0" layoutY="20.0" mnemonicParsing="false" style="-fx-background-color: #CE4257; -fx-text-fill: white;" text="Supprimer" />
+            <Button onAction="#editOwner" layoutX="1084.0" layoutY="20.0" mnemonicParsing="false" style="-fx-background-color: #FFA382; -fx-text-fill: white;" text="Modifier" />
+            <Button onAction="#deleteOwner" layoutX="1152.0" layoutY="20.0" mnemonicParsing="false" style="-fx-background-color: #CE4257; -fx-text-fill: white;" text="Supprimer" />
             <Button onAction="#editUser" layoutX="429.0" layoutY="450.0" mnemonicParsing="false" style="-fx-background-color: #FFA382; -fx-text-fill: white;" text="Modifier" />
             <Button onAction="#deleteUser" layoutX="497.0" layoutY="450.0" mnemonicParsing="false" style="-fx-background-color: #CE4257; -fx-text-fill: white;" text="Supprimer" />
-            <Button layoutX="1093.0" layoutY="450.0" mnemonicParsing="false" style="-fx-background-color: #FFA382; -fx-text-fill: white;" text="Modifier" />
+            <Button onAction="#editState" layoutX="1093.0" layoutY="450.0" mnemonicParsing="false" style="-fx-background-color: #FFA382; -fx-text-fill: white;" text="Modifier" />
             <Button onAction="#deleteState" layoutX="1161.0" layoutY="450.0" mnemonicParsing="false" style="-fx-background-color: #CE4257; -fx-text-fill: white;" text="Supprimer" />
             <TextField fx:id="addressField" layoutX="821.0" layoutY="401.0" prefHeight="27.0" prefWidth="183.0" promptText="Renseignez l'adresse" style="-fx-border-color: #720026;" />
             <Label layoutX="49.0" layoutY="374.0" text="Collection" textFill="WHITE" />

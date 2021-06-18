@@ -8,7 +8,7 @@ public class OwnerReadingConverter implements Converter<Row, Owner> {
     @Override
     public Owner convert(Row source) {
         return Owner.builder()
-                .ownerID(source.get("idowner", Integer.class))
+                .idowner(source.get("idowner", Integer.class))
                 .firstname(source.get("firstname", String.class))
                 .lastname(source.get("lastname", String.class))
                 .organisation(source.get("organisation", String.class))

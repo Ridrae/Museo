@@ -31,3 +31,14 @@
 .Label{
     -fx-font-family: "Brand";
 }
+
+.toReturnUrgent{
+    -fx-background-color:#4F000B;
+}
+.toReturnUrgent .cell{
+    -fx-text-fill: white;
+}
+
+.toReturn{
+    -fx-background-color:#FF9B54;
+}

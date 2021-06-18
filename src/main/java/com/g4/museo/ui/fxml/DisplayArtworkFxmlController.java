@@ -126,15 +126,6 @@ public class DisplayArtworkFxmlController extends FXMLController implements Init
     CheckBox storedBox;
 
     @FXML
-    Label descLabel;
-
-    @FXML
-    AnchorPane detailPane;
-
-    @FXML
-    Label detailLabel;
-
-    @FXML
     Button imageButton;
 
     private ArtworkFull artworkFull;
@@ -165,7 +156,7 @@ public class DisplayArtworkFxmlController extends FXMLController implements Init
                 materialField.setEditable(true);
                 technicField.setEditable(true);
                 typeField.setEditable(true);
-                restoredBox.setDisable(true);
+                restoredBox.setDisable(false);
 
             } else {
                 descField.setEditable(false);
@@ -347,9 +338,9 @@ public class DisplayArtworkFxmlController extends FXMLController implements Init
         try {
             stage = (Stage) this.getView().getScene().getWindow();
             var fileChooser = new FileChooser();
-            fileChooser.setTitle("Select an image");
+            fileChooser.setTitle("Selectionnez une image");
             fileChooser.getExtensionFilters().addAll(
-                    new FileChooser.ExtensionFilter("All Images", "*.*"),
+                    new FileChooser.ExtensionFilter("Tousz", "*.*"),
                     new FileChooser.ExtensionFilter("JPG, JPEG", "*.jpg", "*.jpeg"),
                     new FileChooser.ExtensionFilter("PNG", "*.png")
             );

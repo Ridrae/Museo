@@ -12,8 +12,8 @@ public class ConfirmWindowFactory {
         alert.setHeaderText(header);
         alert.setContentText(message);
 
-        ButtonType buttonTypeConfirm= new ButtonType("Confirm");
-        ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType buttonTypeConfirm= new ButtonType("Confirmer");
+        ButtonType buttonTypeCancel = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
 
         alert.getButtonTypes().setAll(buttonTypeConfirm, buttonTypeCancel);
 

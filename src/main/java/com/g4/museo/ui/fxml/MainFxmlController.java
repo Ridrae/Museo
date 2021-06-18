@@ -6,11 +6,14 @@ import com.g4.museo.persistence.dto.ArtworkFull;
 import com.g4.museo.persistence.dto.Collection;
 import com.g4.museo.persistence.dto.ArtworkState;
 import com.g4.museo.persistence.r2dbc.*;
+import com.g4.museo.ui.utils.AlertWindowFactory;
+import com.g4.museo.ui.utils.ConfirmWindowFactory;
 import com.g4.museo.ui.utils.ErrorWindowFactory;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,6 +24,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
 import org.springframework.context.ApplicationEventPublisher;
@@ -35,6 +39,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
@@ -88,22 +93,15 @@ public class MainFxmlController extends FXMLController implements Initializable 
     @FXML
     private ImageView refreshButton;
 
+    @FXML
+    private Button deleteButton;
+
     private List<ArtworkFull> artworks = new ArrayList<>();
     List<Collection> collectionList = new ArrayList<>();
     List<ArtworkState> stateList = new ArrayList<>();
 
     private void populateArtworkGrid(){
         Flux<ArtworkFull> flux = artworkFullR2dbcDao.findAll();
-        artworkGrid.setRowFactory(tr -> {
-            TableRow<ArtworkFull> row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
-                    ArtworkFull rowData = row.getItem();
-                    onDisplayArtworkCalled(rowData);
-                }
-            });
-            return row;
-        });
         TableColumn<ArtworkFull, ImageView> picture = new TableColumn<>("Photo");
         TableColumn<ArtworkFull, String> name = new TableColumn<>("Nom de l'oeuvre");
         TableColumn<ArtworkFull, String> artist = new TableColumn<>("Nom de l'artiste");
@@ -115,6 +113,39 @@ public class MainFxmlController extends FXMLController implements Initializable 
         artworkGrid.getColumns().forEach(c -> c.setStyle( "-fx-alignment: CENTER;"));
         flux.doOnComplete(() -> {
             artworkGrid.getItems().addAll(artworks);
+            artworkGrid.setRowFactory(new Callback<>() {
+                @Override
+                public TableRow<ArtworkFull> call(TableView<ArtworkFull> personTableView) {
+                    TableRow<ArtworkFull> row = new TableRow<>() {
+                        @Override
+                        protected void updateItem(ArtworkFull artworkFull, boolean b) {
+                            super.updateItem(artworkFull, b);
+                            ObservableList<String> styles = getStyleClass();
+                            if (artworkFull!=null) {
+                                if(artworkFull.getReturnDate().isEqual(LocalDate.now()) || artworkFull.getReturnDate().isBefore(LocalDate.now())){
+                                    if (!styles.contains("toReturnUrgent")) {
+                                        getStyleClass().add("toReturnUrgent");
+                                    }
+                                } else if (artworkFull.getReturnDate().isBefore(LocalDate.now().plusMonths(1)) || artworkFull.getReturnDate().equals(LocalDate.now().plusMonths(1))) {
+                                    if (!styles.contains("toReturn")) {
+                                        getStyleClass().add("toReturn");
+                                    }
+                                }else{
+                                    styles.removeAll(Collections.singleton("toReturn"));
+                                    styles.removeAll(Collections.singleton("toReturnUrgent"));
+                                }
+                            } else {return;}
+                        }
+                    };
+                    row.setOnMouseClicked(event -> {
+                        if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
+                            ArtworkFull rowData = row.getItem();
+                            onDisplayArtworkCalled(rowData);
+                        }
+                    });
+                    return row;
+                }
+            });
             picture.setCellValueFactory(c -> {
                 var tempImage = new ImageView();
                 tempImage.setImage(c.getValue().getImage());
@@ -136,6 +167,7 @@ public class MainFxmlController extends FXMLController implements Initializable 
             });
             localisation.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getStoredLocation()));
             state.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getStateName()));
+            applicationEventPublisher.publishEvent(new AlertReturnEvent(artworks));
         }).subscribe(artworks::add);
     }
 
@@ -174,8 +206,8 @@ public class MainFxmlController extends FXMLController implements Initializable 
         MuseoApplication.initAnonymous();
         MuseoApplication.stage.hide();
         var alertSuccessfulLogout = new Alert(Alert.AlertType.INFORMATION);
-        alertSuccessfulLogout.setHeaderText("Successful Logout");
-        alertSuccessfulLogout.setContentText("Successfully logged out");
+        alertSuccessfulLogout.setHeaderText("Déconnexion réussie");
+        alertSuccessfulLogout.setContentText("Déconnexion réussie");
         alertSuccessfulLogout.showAndWait();
         MuseoApplication.loginStage.show();
     }
@@ -184,8 +216,10 @@ public class MainFxmlController extends FXMLController implements Initializable 
     public void updateRoles(){
         if(SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))){
             managementButton.setVisible(true);
+            deleteButton.setVisible(true);
         } else {
             managementButton.setVisible(false);
+            deleteButton.setVisible(false);
         }
         if (!SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))){
             Platform.runLater(()->{
@@ -325,7 +359,7 @@ public class MainFxmlController extends FXMLController implements Initializable 
     @FXML
     public void onArtworkCalled(ActionEvent event){
         var artworkStage = new Stage();
-        artworkStage.setTitle("Museo Artwork");
+        artworkStage.setTitle("Oeuvre");
         artworkStage.setResizable(false);
         ArtworkFxmlController artworkController = applicationContext.getBean(ArtworkFxmlController.class);
         Scene artworkScene = null;
@@ -345,9 +379,24 @@ public class MainFxmlController extends FXMLController implements Initializable 
     }
 
     @FXML
+    private void onDelete(){
+        try{
+            ArtworkFull artworkFull = artworkGrid.getSelectionModel().getSelectedItem();
+            if(ConfirmWindowFactory.create("Suppression de l'oeuvre: " + artworkFull.getName(), "Voulez-vous supprimer l'oeuvre ?").get().getText().equals("Confirmer")){
+                artworkFullR2dbcDao.delete(artworkFull);
+                artworkGrid.getItems().remove(artworkFull);
+                applicationEventPublisher.publishEvent(new ArtworkRefreshedEvent(this));
+            }
+
+        } catch (NullPointerException e){
+            AlertWindowFactory.create("Selectionnez une oeuvre:", "Selectionnez une oeuvre à supprimer");
+        }
+    }
+
+    @FXML
     public void onDisplayArtworkCalled(ArtworkFull artwork){
         var displayartworkStage = new Stage();
-        displayartworkStage.setTitle("Museo Diplay Artwork");
+        displayartworkStage.setTitle("Oeuvre");
         displayartworkStage.setResizable(false);
         DisplayArtworkFxmlController displayArtworkFxmlController = applicationContext.getBean(DisplayArtworkFxmlController.class);
         Scene displayartworkScene = null;

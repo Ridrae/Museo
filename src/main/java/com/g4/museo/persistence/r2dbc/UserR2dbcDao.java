@@ -27,7 +27,7 @@ public interface UserR2dbcDao extends R2dbcRepository<User, String> {
     Mono<Void> deleteAuthorities(@Param("username") String username);
 
     @Modifying
-    @Query("UPDATE users SET username=:newUsername WHERE username=:username")
-    Mono<Void> updateUser(@Param("username") String username, @Param("newUsername") String newUsername);
+    @Query("UPDATE users SET username=:newUsername, password=:password WHERE username=:username")
+    Mono<Void> updateUser(@Param("username") String username, @Param("newUsername") String newUsername, @Param("password") String password);
 
 }
