@@ -37,7 +37,10 @@
                               </Label>
                            </children>
                         </AnchorPane>
-                        <AnchorPane prefHeight="41.0" prefWidth="118.0" />
+                        <AnchorPane prefHeight="91.0" prefWidth="190.0">
+                           <children>
+                              <Button layoutX="61.0" layoutY="33.0" mnemonicParsing="false" style="-fx-background-color: #CE4257; -fx-text-fill: white;" text="Supprimer l'oeuvre" />
+                           </children></AnchorPane>
                      </children>
                   </HBox>
                   <VBox prefHeight="111.0" prefWidth="116.0" style="-fx-spacing: 10; -fx-padding: 10 0 10 0;">
@@ -54,7 +57,7 @@
                         <TextField fx:id="artworkSearch" prefHeight="52.0" prefWidth="155.0" promptText="Rechercher une oeuvre" style="-fx-padding: 15 0 0 0;" />
                         <TextField fx:id="authorSearch" prefHeight="52.0" prefWidth="145.0" promptText="Rechercher un artiste" style="-fx-padding: 15 0 0 0;" />
                         <RadioButton fx:id="urgentReturnRadio" mnemonicParsing="false" prefHeight="30.0" prefWidth="206.0" text="Oeuvres à rendre (urgent)" />
-                        <RadioButton fx:id="returnRadio" mnemonicParsing="false" prefHeight="30.0" prefWidth="206.0" text="Oeuvres à rendre (1mois)" textFill="#4f000b" />
+                        <RadioButton fx:id="returnRadio" mnemonicParsing="false" prefHeight="30.0" prefWidth="206.0" text="Oeuvres à rendre (1mois)" />
                            <ComboBox fx:id="collectionBox" prefHeight="29.0" prefWidth="127.0" promptText="Collection" style="-fx-background-color: #4F000B;" stylesheets="@style.css" />
                         <ComboBox fx:id="stateBox" prefHeight="29.0" prefWidth="108.0" promptText="Statut" style="-fx-background-color: #4F000B;" stylesheets="@style.css" />
                      </children>
