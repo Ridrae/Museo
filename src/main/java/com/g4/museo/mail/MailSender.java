@@ -47,7 +47,7 @@ public class MailSender {
                     helper.setSubject("Alerte date de retour");
                     helper.setText(htmlMsg, true);
                     helper.addInline("myLogo", new ClassPathResource("images/logo.png"));
-                    emailSender.send(message);
+                    //emailSender.send(message);
                     alreadySent.add(a.getIdartwork());
                 } catch (MessagingException e) {
                     e.printStackTrace();

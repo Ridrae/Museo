@@ -1,9 +1,6 @@
 package com.g4.museo.ui.fxml;
 
-import com.g4.museo.event.CollectionRefreshEvent;
-import com.g4.museo.event.OwnerRefreshEvent;
-import com.g4.museo.event.StateRefreshEvent;
-import com.g4.museo.event.UserLoginEvent;
+import com.g4.museo.event.*;
 import com.g4.museo.persistence.dto.*;
 import com.g4.museo.persistence.r2dbc.*;
 import com.g4.museo.ui.utils.AlertWindowFactory;
@@ -23,6 +20,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -56,6 +54,9 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
 
     @Autowired
     ArtworkFullR2dbcDao artworkFullR2dbcDao;
+
+    @Autowired
+    ApplicationEventPublisher applicationEventPublisher;
 
     @FXML
     ComboBox<String>  ownerBox;
@@ -367,6 +368,22 @@ public class ArtworkFxmlController extends FXMLController implements Initializab
             artworkFullDTO.setStored(false);
         }
 
-        Mono<ArtworkFull> artwork = artworkFullR2dbcDao.save(artworkFullDTO);
+        artworkFullR2dbcDao.createArtwork(artworkFullDTO.getName(), artworkFullDTO.getAuthor(), artworkFullDTO.getDate(),
+                artworkFullDTO.isCertified(), artworkFullDTO.getStoredLocation(), artworkFullDTO.getCollectionID(), artworkFullDTO.getStateID(), artworkFullDTO.isBorrowed(),
+                artworkFullDTO.getDesc(), SecurityContextHolder.getContext().getAuthentication().getName()).block();
+        Integer id = artworkFullR2dbcDao.getId().block();
+        if(imageFile!=null){
+            try {
+                byte[] picture  = Files.readAllBytes(imageFile.toPath());
+                artworkFullR2dbcDao.updatePicture(id, picture).subscribe();
+            } catch (IOException e) {
+                ErrorWindowFactory.create(e);
+            }
+        }
+        artworkFullR2dbcDao.createDetails(id, artworkFullDTO.getWidth(), artworkFullDTO.getHeight(), artworkFullDTO.getPerimeter(),
+                artworkFullDTO.getInsuranceNumber(), artworkFullDTO.getMaterial(), artworkFullDTO.getTechnic(), artworkFullDTO.getType(), artworkFullDTO.isRestored()).block();
+        artworkFullR2dbcDao.insertBorrow(id, artworkFullDTO.getIdowner(), artworkFullDTO.getDateBorrowed(), artworkFullDTO.getReturnDate(), artworkFullDTO.isStored(), artworkFullDTO.isLongTerm()).block();
+        applicationEventPublisher.publishEvent(new ArtworkRefreshedEvent(this));
+
     }
 }

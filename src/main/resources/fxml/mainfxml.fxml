@@ -39,7 +39,7 @@
                         </AnchorPane>
                         <AnchorPane prefHeight="91.0" prefWidth="190.0">
                            <children>
-                              <Button layoutX="61.0" layoutY="33.0" mnemonicParsing="false" style="-fx-background-color: #CE4257; -fx-text-fill: white;" text="Supprimer l'oeuvre" />
+                              <Button fx:id="deleteButton" onAction="#onDelete" layoutX="61.0" layoutY="33.0" mnemonicParsing="false" style="-fx-background-color: #CE4257; -fx-text-fill: white;" text="Supprimer l'oeuvre" />
                            </children></AnchorPane>
                      </children>
                   </HBox>

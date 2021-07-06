@@ -131,10 +131,10 @@ public class MainFxmlController extends FXMLController implements Initializable 
                                         getStyleClass().add("toReturn");
                                     }
                                 }else{
-                                    styles.removeAll(Collections.singleton("toReturn"));
-                                    styles.removeAll(Collections.singleton("toReturnUrgent"));
+                                    getStyleClass().remove("toReturn");
+                                    getStyleClass().remove("toReturnUrgent");
                                 }
-                            } else {return;}
+                            }
                         }
                     };
                     row.setOnMouseClicked(event -> {
@@ -383,7 +383,9 @@ public class MainFxmlController extends FXMLController implements Initializable 
         try{
             ArtworkFull artworkFull = artworkGrid.getSelectionModel().getSelectedItem();
             if(ConfirmWindowFactory.create("Suppression de l'oeuvre: " + artworkFull.getName(), "Voulez-vous supprimer l'oeuvre ?").get().getText().equals("Confirmer")){
-                artworkFullR2dbcDao.delete(artworkFull);
+                artworkFullR2dbcDao.deleteArtwork(artworkFull.getIdartwork()).block();
+                artworkFullR2dbcDao.deleteArtworkDetails(artworkFull.getIdartwork()).block();
+                artworkFullR2dbcDao.deleteArtworkBorrow(artworkFull.getIdartwork()).block();
                 artworkGrid.getItems().remove(artworkFull);
                 applicationEventPublisher.publishEvent(new ArtworkRefreshedEvent(this));
             }

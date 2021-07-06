@@ -25,7 +25,6 @@ public class ArtworkFullReadingConverter implements Converter<Row, ArtworkFull> 
                 .idartwork(source.get("idartwork", Integer.class))
                 .name(source.get("name", String.class))
                 .author(source.get("author", String.class))
-                .picture(source.get("picture", Blob.class))
                 .date(source.get("date", LocalDate.class))
                 .certified(BooleanUtils.toBoolean(source.get("certified", Byte.class)))
                 .storedLocation(source.get("stored_location", String.class))
@@ -56,33 +55,34 @@ public class ArtworkFullReadingConverter implements Converter<Row, ArtworkFull> 
         if(source.get("is_restored", Byte.class) != null){
             artworkBuilder.restored(BooleanUtils.toBoolean(source.get("is_restored", Byte.class)));
         }
+        if(source.get("picture",Blob.class) != null){
+            artworkBuilder.picture(source.get("picture",Blob.class));
+            Blob picture = source.get("picture", Blob.class);
+            final var image = new byte[1][1];
+            Subscriber<ByteBuffer> bytes = new Subscriber<>() {
+                @Override
+                public void onSubscribe(Subscription subscription) {
+                    subscription.request(1);
+                }
 
-        Blob picture = source.get("picture", Blob.class);
-        final var image = new byte[1][1];
-        Subscriber<ByteBuffer> bytes = new Subscriber<>() {
-            @Override
-            public void onSubscribe(Subscription subscription) {
-                subscription.request(1);
-            }
+                @Override
+                public void onNext(ByteBuffer byteBuffer) {
+                    image[0] = byteBuffer.array();
+                }
 
-            @Override
-            public void onNext(ByteBuffer byteBuffer) {
-                image[0] = byteBuffer.array();
-            }
+                @Override
+                public void onError(Throwable throwable) {
+                    ErrorWindowFactory.create(new Exception(throwable));
+                }
 
-            @Override
-            public void onError(Throwable throwable) {
-                ErrorWindowFactory.create(new Exception(throwable));
-            }
-
-            @Override
-            public void onComplete() {
-                //No operation necessary upon completion
-            }
-        };
-        picture.stream().subscribe(bytes);
-        artworkBuilder.image(new Image(new ByteArrayInputStream(image[0])));
-
+                @Override
+                public void onComplete() {
+                    //No operation necessary upon completion
+                }
+            };
+            picture.stream().subscribe(bytes);
+            artworkBuilder.image(new Image(new ByteArrayInputStream(image[0])));
+        }
         return artworkBuilder.build();
     }
 }
